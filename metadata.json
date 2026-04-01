@@ -1,0 +1,5 @@
+{
+  "name": "ESL Lesson Adventure",
+  "description": "An integrated educational software for a 90-minute English lesson for 10-year-old beginners. It features four sequential modules: a vocabulary creator, a memory game, a hangman-style rocket game, and BINGO, all using a co-created word list.",
+  "requestFramePermissions": []
+}
