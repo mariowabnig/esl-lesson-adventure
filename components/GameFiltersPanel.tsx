@@ -42,7 +42,7 @@ const GameFiltersPanel: React.FC = () => {
       {/* Max Word Length and Source Filters */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Maximale Wortlänge (≤):</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Max Word Length (≤):</label>
           <div className="flex items-center space-x-3">
             <input
               type="number"
@@ -53,7 +53,7 @@ const GameFiltersPanel: React.FC = () => {
                 const val = e.target.value === '' ? null : (parseInt(e.target.value) || null);
                 setGameFilters(prev => ({ ...prev, maxWordLength: val }));
               }}
-              placeholder="keine"
+              placeholder="none"
               className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-center font-bold"
             />
             <div className="flex flex-wrap gap-1">
@@ -74,13 +74,13 @@ const GameFiltersPanel: React.FC = () => {
                   gameFilters.maxWordLength == null ? 'bg-gray-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                keine
+                none
               </button>
             </div>
           </div>
         </div>
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">Wortquelle:</label>
+          <label className="block text-sm font-bold text-gray-700 mb-2">Word Source:</label>
           <div className="flex flex-wrap gap-2">
             {(['all','alphabet','custom'] as const).map(src => (
               <button
@@ -90,7 +90,7 @@ const GameFiltersPanel: React.FC = () => {
                   gameFilters.vocabSource === src ? 'bg-indigo-500 text-white' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
                 }`}
               >
-                {src === 'all' ? 'alle wörter' : src === 'alphabet' ? 'ausgewählte alphabet-wörter' : 'eigene wörter'}
+                {src === 'all' ? 'all words' : src === 'alphabet' ? 'alphabet words' : 'custom words'}
               </button>
             ))}
           </div>

@@ -30,7 +30,7 @@ const CategoryAddWord: React.FC<Props> = ({ category, onAdd }) => {
           add word
         </button>
       </div>
-      <p className="text-xs text-gray-500 mt-1">wird automatisch zum passenden buchstaben hinzugefügt</p>
+      <p className="text-xs text-gray-500 mt-1">will be automatically added to the matching letter</p>
     </div>
   );
 };

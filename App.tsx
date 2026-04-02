@@ -8,8 +8,8 @@ import Module1AlphabetCreator from './modules/Module1_AlphabetCreator';
 import Module2MemoryBomb from './modules/Module2_MemoryBomb';
 import Module3RocketLaunch from './modules/Module3_RocketLaunch';
 import Module4Battleships from './modules/Module4_Battleships';
-import Module5Bingo from './modules/Module4_Bingo';
-import Module6WordReview from './modules/Module5_WordReview';
+import Module4Bingo from './modules/Module4_Bingo';
+import Module5WordReview from './modules/Module5_WordReview';
 import Module7LetterExplanation from './modules/Module6_LetterExplanation';
 import ModuleAlphabetOverview from './modules/ModuleAlphabetOverview';
 import ModuleSettings from './modules/ModuleSettings';
@@ -108,9 +108,9 @@ const App: React.FC = () => {
       case 6:
         return <Module4Battleships sessionVocabulary={sessionVocabulary} onBack={() => setActiveModule(0)} />;
       case 7:
-        return <Module5Bingo />;
+        return <Module4Bingo />;
       case 8:
-        return <Module6WordReview />;
+        return <Module5WordReview />;
       case 10:
         return <ModuleAlphabetOverview sessionVocabulary={sessionVocabulary} />;
       case 9:

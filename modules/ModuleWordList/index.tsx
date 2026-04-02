@@ -136,7 +136,7 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
               <label className="block text-sm font-bold text-gray-700 mb-2">Choose Predefined</label>
               <div className="flex gap-2 flex-wrap">
                 {availablePredefined.slice(0, 5).map((w, i) => (
-                  <button key={i} onClick={() => handleAddPredefined(w)} className="px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded-full text-sm">
+                  <button key={w.word} onClick={() => handleAddPredefined(w)} className="px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded-full text-sm">
                     {w.word}
                   </button>
                 ))}
@@ -155,7 +155,7 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
               </div>
             </div>
           </div>
-          <div className="text-xs text-gray-500 mt-2">Diese Eingabe erscheint erst, nachdem Sie mindestens ein Wort für jeden Buchstaben hinzugefügt haben.</div>
+          <div className="text-xs text-gray-500 mt-2">This input only appears after you have added at least one word for each letter.</div>
         </div>
       )}
 
@@ -217,7 +217,7 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {words.map((word, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 group">
+                    <div key={`${word.word}-${index}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 group">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 flex items-center justify-center">
                           <ImageRenderer image={word.image} alt={word.word} className="max-w-full max-h-full" />
@@ -267,7 +267,7 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
               {words.length > 0 ? (
                 <div className="space-y-3">
                   {words.map((word, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 group">
+                    <div key={`${word.word}-${index}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 group">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 flex items-center justify-center">
                           <ImageRenderer image={word.image} alt={word.word} className="max-w-full max-h-full" />
@@ -290,7 +290,7 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
               ) : (
 
                 <div className="text-center text-gray-500 py-8">
-                  noch keine wörter in {category}
+                  no words in {category} yet
                 </div>
               )}
             </div>

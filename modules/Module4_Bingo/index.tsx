@@ -243,7 +243,7 @@ const Module4Bingo: React.FC = () => {
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                     >
-                        🎯 Übungsmodus
+                        🎯 Practice Mode
                     </button>
                     <button
                         onClick={() => setGameMode('advanced')}
@@ -279,7 +279,7 @@ const Module4Bingo: React.FC = () => {
 
                                 return (
                                     <div
-                                        key={index}
+                                        key={`${word.word}-${index}`}
                                         onClick={() => handleCellClick(word)}
                                         className={`w-20 h-20 border-2 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all ${
                                             isMarked

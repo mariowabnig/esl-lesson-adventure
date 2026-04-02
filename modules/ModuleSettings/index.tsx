@@ -54,7 +54,7 @@ const ModuleSettings: React.FC = () => {
       <Section title="Spiel-Einstellungen" onReset={resetGamePrefs}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-            <span>Schiffe versenken Rastergröße</span>
+            <span>Battleships Grid Size</span>
             <select className="border rounded-md p-1"
               value={settings.gamePrefs.battleshipsGrid}
               onChange={(e) => setSettings(s => ({ ...s, gamePrefs: { ...s.gamePrefs, battleshipsGrid: Number(e.target.value) as any } }))}

@@ -101,8 +101,8 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   // Validate if a set of ship sizes can fit in a grid (rough check by total cells)
   const validateFleetFits = (size: number, ships: number[]): string => {
     const totalCells = ships.reduce((sum, s) => sum + s, 0);
-    if (totalCells > size * size * 0.6) return 'flotte könnte zu groß sein (mehr als 60% der felder)';
-    if (ships.some(s => s > size)) return 'ein schiff ist länger als die gittergröße';
+    if (totalCells > size * size * 0.6) return 'fleet may be too large (more than 60% of cells)';
+    if (ships.some(s => s > size)) return 'a ship is longer than the grid size';
     return '';
   };
     const number = parseInt(coord.slice(1));
@@ -212,10 +212,10 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
       const playerGridWithShips = placeShipsOnGrid(emptyPlayerGrid, playerShips);
       setPlayerGrid(playerGridWithShips);
       setPlayerShips(playerShips);
-      setGameMessage(gameMode === 'teamChallenge' ? 'team-herausforderung: geben sie koordinaten auf englisch an!' : 'übungsmodus: sagen sie koordinaten auf englisch (z.b. "A5", "B3")');
+      setGameMessage(gameMode === 'teamChallenge' ? 'Team Challenge: say coordinates in English!' : 'Practice mode: say coordinates in English (e.g. "A5", "B3")');
     } else {
       setPlayerGrid(emptyPlayerGrid);
-      setGameMessage('platzieren sie ihre schiffe auf dem spielfeld');
+      setGameMessage('Place your ships on the board');
     }
   };
 
@@ -223,14 +223,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   const handleCoordinateSubmit = () => {
     const coord = parseCoordinate(selectedCoordinate);
     if (!coord) {
-      setGameMessage('Ungültige Koordinate! Verwenden Sie Format wie "A5" oder "B3"');
+      setGameMessage('Invalid coordinate! Use format like "A5" or "B3"');
       return;
     }
 
     const { row, col } = coord;
 
     if (enemyGrid[row][col].isHit) {
-      setGameMessage('Diese Koordinate wurde bereits getroffen!');
+      setGameMessage('This coordinate was already hit!');
       return;
     }
 
@@ -240,7 +240,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
     if (newEnemyGrid[row][col].hasShip) {
       newEnemyGrid[row][col].state = 'hit';
-      setGameMessage(`Treffer bei ${selectedCoordinate}! 🎯`);
+      setGameMessage(`Hit at ${selectedCoordinate}! 🎯`);
 
       // Check if ship is sunk
       const ship = enemyShips.find(s => s.positions.some(p => p.row === row && p.col === col));
@@ -260,14 +260,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
           ship.positions.forEach(p => {
             newEnemyGrid[p.row][p.col].state = 'sunk';
           });
-          setGameMessage(`Schiff #${shipIndex + 1} (Länge ${size}) versenkt bei ${selectedCoordinate}! 🚢💥`);
+          setGameMessage(`Ship #${shipIndex + 1} (length ${size}) sunk at ${selectedCoordinate}! 🚢💥`);
         } else {
-          setGameMessage(`Treffer auf Schiff #${shipIndex + 1} (Länge ${size}) bei ${selectedCoordinate}! 🎯`);
+          setGameMessage(`Hit on Ship #${shipIndex + 1} (length ${size}) at ${selectedCoordinate}! 🎯`);
         }
       }
     } else {
       newEnemyGrid[row][col].state = 'miss';
-      setGameMessage(`Verfehlt bei ${selectedCoordinate}! 💦`);
+      setGameMessage(`Miss at ${selectedCoordinate}! 💦`);
     }
 
     setEnemyGrid(newEnemyGrid);
@@ -284,11 +284,11 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
       if (allSunk) {
         const used = (turnCount + 1);
         const win = used <= predictionLimit;
-        setGameMessage(win ? `🎉 gewonnen! alle schiffe in ${used} zügen (vorhersage: ${predictionLimit}).` : `⚠️ verloren! ${used} züge gebraucht (vorhersage: ${predictionLimit}).`);
+        setGameMessage(win ? `🎉 Won! All ships sunk in ${used} turns (prediction: ${predictionLimit}).` : `⚠️ Lost! Used ${used} turns (prediction: ${predictionLimit}).`);
         setGamePhase('gameOver');
         return;
       } else if (turnCount + 1 >= predictionLimit) {
-        setGameMessage(`❌ verloren! vorhersage erreicht (${predictionLimit}) und noch schiffe übrig.`);
+        setGameMessage(`❌ Lost! Prediction reached (${predictionLimit}) and ships remaining.`);
         setGamePhase('gameOver');
         return;
       }
@@ -299,11 +299,11 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
       const limit = typeof proPrediction === 'number' ? proPrediction : null;
       const allSunkNow = enemyShips.every(s => s.isSunk);
       if (allSunkNow) {
-        setGameMessage(`🏆 sieg! alle schiffe versenkt in ${turnCount + 1} zügen${(limit?` (vorhersage: ${limit})`: '')}.`);
+        setGameMessage(`🏆 Victory! All ships sunk in ${turnCount + 1} turns${(limit?` (prediction: ${limit})`: '')}.`);
         setGamePhase('gameOver');
         return;
       } else if (limit && (turnCount + 1) >= limit) {
-        setGameMessage(`❌ verloren! vorhersage erreicht (${limit}) und noch schiffe übrig.`);
+        setGameMessage(`❌ Lost! Prediction reached (${limit}) and ships remaining.`);
         setGamePhase('gameOver');
         return;
       }
@@ -311,7 +311,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
     // Standard win condition
     if (allSunk) {
-      setGameMessage('🎉 gewonnen! alle schiffe versenkt!');
+      setGameMessage('🎉 Won! All ships sunk!');
       setGamePhase('gameOver');
     }
   };
@@ -324,7 +324,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
     setTurnCount(0);
     setShotsTaken(0);
     setGamePhase('setup');
-    setGameMessage('team-herausforderung zurückgesetzt');
+    setGameMessage('Team challenge reset');
   };
 
 
@@ -379,7 +379,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-blue-600">🚢 schiffe versenken</h1>
+        <h1 className="text-3xl font-bold text-blue-600">🚢 Battleships</h1>
         <button
           onClick={onBack}
           className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
@@ -427,14 +427,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	                  <div className="flex items-center space-x-3">
 	                    <span className="text-2xl">🤝</span>
 	                    <div>
-	                      <div className="font-bold text-rose-700">team-herausforderung</div>
-	                      <div className="text-sm text-rose-600">vorhersage der züge und gemeinsam gewinnen</div>
+	                      <div className="font-bold text-rose-700">Team Challenge</div>
+	                      <div className="text-sm text-rose-600">predict turns and win together</div>
 	                    </div>
 	                  </div>
 	                </div>
 
-                      <div className="font-bold text-green-700">übungsmodus</div>
-                      <div className="text-sm text-green-600">Koordinaten lernen ohne Druck</div>
+                      <div className="font-bold text-green-700">Practice Mode</div>
+                      <div className="text-sm text-green-600">learn coordinates without pressure</div>
                     </div>
                   </div>
                 </button>
@@ -449,48 +449,48 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                 >
                   {professionalMode && (
                     <div className="mt-2 bg-white border rounded-lg p-3 text-sm">
-                      <div className="font-bold mb-1">aktuelle schiffskonfiguration</div>
+                      <div className="font-bold mb-1">current ship configuration</div>
                       <div className="flex flex-wrap gap-2 items-center">
                         {proShipSummary.items.map((cfg, i) => (
-                          <span key={i} className="px-2 py-1 bg-gray-100 rounded border">{cfg.count} × Länge {cfg.size}</span>
+                          <span key={i} className="px-2 py-1 bg-gray-100 rounded border">{cfg.count} × length {cfg.size}</span>
                         ))}
-                        <span className="ml-auto font-bold">gesamt: {proShipSummary.total}</span>
+                        <span className="ml-auto font-bold">total: {proShipSummary.total}</span>
                       </div>
-                      <p className="text-xs text-gray-600 mt-1">größe ändern aktualisiert beide spielfelder sofort.</p>
+                      <p className="text-xs text-gray-600 mt-1">changing size updates both boards immediately.</p>
                     </div>
                   )}
                   <div className="flex items-center space-x-3">
                     <span className="text-2xl">🤖</span>
                     <div>
-                      <div className="font-bold text-orange-700">gegen computer</div>
-                      <div className="text-sm text-orange-600">strategisches spiel gegen ki</div>
+                      <div className="font-bold text-orange-700">vs Computer</div>
+                      <div className="text-sm text-orange-600">strategic game against AI</div>
                     </div>
                   </div>
               {professionalMode && (
                 <div className="md:col-span-3 bg-amber-50 rounded-lg p-4">
-                  <label className="block text-sm font-bold text-amber-700 mb-2">individuelle flotte konfigurieren:</label>
+                  <label className="block text-sm font-bold text-amber-700 mb-2">configure custom fleet:</label>
                   <div className="flex items-center gap-2 mb-2">
-                    <button onClick={()=> setProIndividualShips(prev=>[...prev, 3])} className="px-2 py-1 text-xs bg-gray-200 rounded">+ schiff hinzufügen (länge 3)</button>
-                    <button onClick={()=> setProIndividualShips([])} className="px-2 py-1 text-xs bg-gray-200 rounded">flotte leeren</button>
-                    <button onClick={()=> setProIndividualShips([2,2,3,3,4,5])} className="px-2 py-1 text-xs bg-gray-200 rounded">standardflotte</button>
+                    <button onClick={()=> setProIndividualShips(prev=>[...prev, 3])} className="px-2 py-1 text-xs bg-gray-200 rounded">+ add ship (length 3)</button>
+                    <button onClick={()=> setProIndividualShips([])} className="px-2 py-1 text-xs bg-gray-200 rounded">clear fleet</button>
+                    <button onClick={()=> setProIndividualShips([2,2,3,3,4,5])} className="px-2 py-1 text-xs bg-gray-200 rounded">default fleet</button>
                   </div>
                   {proIndividualShips.length === 0 ? (
-                    <p className="text-xs text-amber-700">keine individuellen schiffe hinzugefügt. nutzen sie „+ schiff hinzufügen“.</p>
+                    <p className="text-xs text-amber-700">no custom ships added. use "+ add ship".</p>
                   ) : (
                     <div className="space-y-2">
                       {proIndividualShips.map((len, idx) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <span className="text-xs text-gray-600">Schiff #{idx+1}</span>
+                          <span className="text-xs text-gray-600">Ship #{idx+1}</span>
                           <input type="number" min={2} max={8} value={len}
                             onChange={(e)=> setProIndividualShips(prev=>{
                               const n=[...prev]; n[idx]=Math.max(2, Math.min(8, parseInt(e.target.value)||2)); return n;})}
                             className="w-16 px-2 py-1 border rounded text-sm"/>
-                          <button onClick={()=> setProIndividualShips(prev=> prev.filter((_,i)=>i!==idx))} className="text-xs text-red-600">entfernen</button>
+                          <button onClick={()=> setProIndividualShips(prev=> prev.filter((_,i)=>i!==idx))} className="text-xs text-red-600">remove</button>
                         </div>
                       ))}
-                      <div className="text-xs text-gray-600">gesamt: {proIndividualShips.length} schiffe, zellen: {proIndividualShips.reduce((a,b)=>a+b,0)}</div>
+                      <div className="text-xs text-gray-600">total: {proIndividualShips.length} ships, cells: {proIndividualShips.reduce((a,b)=>a+b,0)}</div>
                       <div className="text-xs font-bold {fleetValidationMsg ? 'text-red-600' : 'text-green-700'}">
-                        {fleetValidationMsg || 'flotte sieht gut aus.'}
+                        {fleetValidationMsg || 'fleet looks good.'}
                       </div>
                     </div>
                   )}
@@ -575,8 +575,8 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                   <div className="flex items-center space-x-3">
                     <span className="text-2xl">👥</span>
                     <div>
-                      <div className="font-bold text-purple-700">zwei spieler</div>
-                      <div className="text-sm text-purple-600">lokales multiplayer-spiel</div>
+                      <div className="font-bold text-purple-700">Two Players</div>
+                      <div className="text-sm text-purple-600">local multiplayer game</div>
                     </div>
                   </div>
                 </button>
@@ -598,7 +598,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                           }
                         }}
                       >
-                        flotte übernehmen
+                        apply fleet
                       </button>
                       {fleetValidationMsg && (
                         <span className="ml-3 text-xs text-red-600">{fleetValidationMsg}</span>
@@ -608,7 +608,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">spielfeldgröße:</label>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Grid Size:</label>
               <select
                 value={gridSize}
                 onChange={(e) => setGridSize(Number(e.target.value))}
@@ -621,10 +621,10 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
             {/* Team Challenge Controls */}
 	            <div className="md:col-span-3 bg-rose-50 rounded-lg p-4">
-	              <label className="block text-sm font-bold text-rose-700 mb-2">team-herausforderung:</label>
+	              <label className="block text-sm font-bold text-rose-700 mb-2">Team Challenge:</label>
 	              <div className="flex flex-col md:flex-row gap-4 items-center">
 	                <div className="flex items-center gap-2">
-	                  <span className="text-sm">wir werden alle schiffe in</span>
+	                  <span className="text-sm">we will sink all ships in</span>
 	                  <input
 	                    type="number"
 	                    min={1}
@@ -635,15 +635,15 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	                      setPrediction(val as number | '');
 	                    }}
 	                    className="w-24 px-3 py-2 border border-rose-300 rounded-lg text-center font-bold"
-	                    placeholder="züge"
+	                    placeholder="turns"
 	                  />
-	                  <span className="text-sm">zügen versenken.</span>
+	                  <span className="text-sm">turns.</span>
 	                </div>
 	                <button
 	                  onClick={() => {
 	                    if (gameMode !== 'teamChallenge') setGameMode('teamChallenge');
 	                    if (prediction === '' || typeof prediction !== 'number') {
-	                      setGameMessage('bitte geben sie eine gültige vorhersage ein (mind. 1).');
+	                      setGameMessage('Please enter a valid prediction (min. 1).');
 	                      return;
 	                    }
 	                    setPredictionLimit(prediction);
@@ -652,14 +652,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	                    setGamePhase('setup');
 	                    initializeGame();
 	                    setGamePhase('playing');
-	                    setGameMessage('team-herausforderung gestartet!');
+	                    setGameMessage('Team challenge started!');
 	                  }}
 	                  className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-lg"
 	                >
-	                  neues spiel starten
+	                  start new game
 	                </button>
 	              </div>
-	              <p className="text-xs text-rose-700 mt-2">vorhersagebereich: 1 bis {gridSize * gridSize}.</p>
+	              <p className="text-xs text-rose-700 mt-2">prediction range: 1 to {gridSize * gridSize}.</p>
 	            </div>
 
 
@@ -667,23 +667,23 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
 	            {/* per-session ship configuration */}
 	            <div className="md:col-span-3 bg-gray-50 rounded-lg p-4">
-	              <label className="block text-sm font-bold text-gray-700 mb-3">schiffskonfiguration (pro spiel):</label>
+	              <label className="block text-sm font-bold text-gray-700 mb-3">ship configuration (per game):</label>
 
 	            <div className="md:col-span-3 text-sm text-gray-600">
-	              <p className="mt-2">hinweis: schiffe werden zufällig platziert. wählen sie die anzahl der</p>
+	              <p className="mt-2">note: ships are placed randomly. choose the number of</p>
 	              <ul className="list-disc list-inside">
-	                <li>destroyer: 2 felder</li>
+	                <li>destroyer: 2 cells</li>
             {professionalMode && proPrediction !== '' && (
               <div className="flex items-center justify-center gap-6 mb-4">
                 <div className={`text-lg font-bold px-3 py-1 rounded-full ${turnCount+1 <= Math.floor(0.7*(proPrediction as number)) ? 'bg-green-100 text-green-700' : (turnCount+1 < (proPrediction as number) ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700')}`}>
-                  zug {turnCount + 1} von {proPrediction} (pro)
+                  turn {turnCount + 1} of {proPrediction} (pro)
                 </div>
-                <div className="text-sm text-gray-600">🛳️ verbleibende schiffe: {enemyShips.filter(s => !s.isSunk).length}</div>
+                <div className="text-sm text-gray-600">🛳️ ships remaining: {enemyShips.filter(s => !s.isSunk).length}</div>
               </div>
             )}
-	                <li>cruiser: 3 felder</li>
-	                <li>battleship: 4 felder</li>
-	                <li>carrier: 5 felder</li>
+	                <li>cruiser: 3 cells</li>
+	                <li>battleship: 4 cells</li>
+	                <li>carrier: 5 cells</li>
 	              </ul>
 	            </div>
 
@@ -713,7 +713,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	                  );
 	                })}
 	              </div>
-	              <p className="text-xs text-gray-500 mt-2">Passen Sie die Anzahl pro Schiffstyp an. Die Platzierung erfolgt zufällig.</p>
+	              <p className="text-xs text-gray-500 mt-2">Adjust the number per ship type. Placement is random.</p>
 	            </div>
 
 
@@ -722,7 +722,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                 onClick={() => setGamePhase('placement')}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
               >
-                spiel starten
+                start game
               </button>
             </div>
           </div>
@@ -730,19 +730,19 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
           {/* Detailed German Instructions */}
           <div className="mt-8 space-y-6">
             <div className="bg-blue-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-blue-800 mb-4">📚 Wie man Koordinaten liest</h3>
+              <h3 className="text-xl font-bold text-blue-800 mb-4">📚 How to Read Coordinates</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-bold text-blue-700 mb-2">Koordinaten-Format:</h4>
+                  <h4 className="font-bold text-blue-700 mb-2">Coordinate Format:</h4>
                   <ul className="text-blue-600 space-y-1">
-                    <li>• <strong>Buchstabe + Zahl:</strong> A1, B3, C5, etc.</li>
-                    <li>• <strong>Reihen:</strong> A, B, C, D... (von oben nach unten)</li>
-                    <li>• <strong>Spalten:</strong> 1, 2, 3, 4... (von links nach rechts)</li>
-                    <li>• <strong>Beispiele:</strong> A5 = Reihe A, Spalte 5</li>
+                    <li>• <strong>Letter + Number:</strong> A1, B3, C5, etc.</li>
+                    <li>• <strong>Rows:</strong> A, B, C, D... (top to bottom)</li>
+                    <li>• <strong>Columns:</strong> 1, 2, 3, 4... (left to right)</li>
+                    <li>• <strong>Example:</strong> A5 = Row A, Column 5</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-blue-700 mb-2">Englische Aussprache:</h4>
+                  <h4 className="font-bold text-blue-700 mb-2">English Pronunciation:</h4>
                   <ul className="text-blue-600 space-y-1">
                     <li>• <strong>A1:</strong> "A one" [eɪ wʌn]</li>
                     <li>• <strong>B3:</strong> "B three" [biː θriː]</li>
@@ -755,22 +755,22 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-green-50 rounded-lg p-4">
-                <h4 className="font-bold text-green-800 mb-2">🎯 übungsmodus</h4>
+                <h4 className="font-bold text-green-800 mb-2">🎯 Practice Mode</h4>
                 <ul className="text-green-700 text-sm space-y-1">
-                  <li>• perfekt zum lernen der koordinaten</li>
-                  <li>• schiffe sind bereits platziert</li>
+                  <li>• perfect for learning coordinates</li>
+                  <li>• ships are already placed</li>
 
 	            {gameMode === 'teamChallenge' && predictionLimit != null && (
 	              <div className="flex items-center justify-center gap-6 mb-4">
 	                <div className={`text-lg font-bold px-3 py-1 rounded-full ${turnCount+1 <= Math.floor(0.7*predictionLimit) ? 'bg-green-100 text-green-700' : (turnCount+1 < predictionLimit ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700')}`}>
-	                  zug {turnCount + 1} von {predictionLimit} (vorhergesagt)
+	                  turn {turnCount + 1} of {predictionLimit} (predicted)
 	                </div>
-	                <div className="text-sm text-gray-600">🛳️ verbleibende schiffe: {enemyShips.filter(s => !s.isSunk).length}</div>
+	                <div className="text-sm text-gray-600">🛳️ ships remaining: {enemyShips.filter(s => !s.isSunk).length}</div>
 	              </div>
 	            )}
 
-                  <li>• konzentrieren sie sich auf die aussprache</li>
-                  <li>• keine zeitbegrenzung</li>
+                  <li>• focus on pronunciation</li>
+                  <li>• no time limit</li>
                 </ul>
               </div>
 
@@ -779,59 +779,59 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	            {gameMode === 'teamChallenge' && predictionLimit != null && (
 	              <div className="flex items-center justify-center gap-6 mb-4">
 	                <div className={`text-lg font-bold px-3 py-1 rounded-full ${turnCount+1 <= Math.floor(0.7*predictionLimit) ? 'bg-green-100 text-green-700' : (turnCount+1 < predictionLimit ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700')}`}>
-	                  zug {turnCount + 1} von {predictionLimit} (vorhergesagt)
+	                  turn {turnCount + 1} of {predictionLimit} (predicted)
 	                </div>
-	                <div className="text-sm text-gray-600">🛳️ verbleibende schiffe: {enemyShips.filter(s => !s.isSunk).length}</div>
+	                <div className="text-sm text-gray-600">🛳️ ships remaining: {enemyShips.filter(s => !s.isSunk).length}</div>
 	              </div>
 	            )}
 
-                <h4 className="font-bold text-orange-800 mb-2">🤖 gegen computer</h4>
+                <h4 className="font-bold text-orange-800 mb-2">🤖 vs Computer</h4>
                 <ul className="text-orange-700 text-sm space-y-1">
-                  <li>• spielen sie gegen die ki</li>
-                  <li>• computer schießt zurück</li>
-                  <li>• strategisches denken erforderlich</li>
-                  <li>• verschiedene schwierigkeitsgrade</li>
+                  <li>• play against the AI</li>
+                  <li>• computer shoots back</li>
+                  <li>• strategic thinking required</li>
+                  <li>• different difficulty levels</li>
                 </ul>
               </div>
 
               <div className="bg-purple-50 rounded-lg p-4">
-                <h4 className="font-bold text-purple-800 mb-2">👥 zwei spieler</h4>
+                <h4 className="font-bold text-purple-800 mb-2">👥 Two Players</h4>
                 <ul className="text-purple-700 text-sm space-y-1">
-                  <li>• lokales multiplayer-spiel</li>
-                  <li>• bildschirm wegdrehen zwischen zügen!</li>
-                  <li>• abwechselnd schiffe platzieren</li>
-                  <li>• perfekt für klassenzimmer</li>
+                  <li>• local multiplayer game</li>
+                  <li>• turn the screen away between turns!</li>
+                  <li>• take turns placing ships</li>
+                  <li>• perfect for the classroom</li>
                 </ul>
               </div>
             </div>
 
 	      {gamePhase === 'gameOver' && gameMode === 'teamChallenge' && predictionLimit != null && (
 	        <div className="bg-rose-50 rounded-lg shadow-md p-6 text-center mb-4">
-	          <h3 className="text-xl font-bold text-rose-700 mb-2">team-ergebnis</h3>
-	          <p className="text-rose-800">tatsächliche züge: {turnCount}</p>
-	          <p className="text-rose-800">vorhersage: {predictionLimit}</p>
-	          <p className="text-rose-800">versenkte schiffe: {enemyShips.filter(s => s.isSunk).length} / {enemyShips.length}</p>
+	          <h3 className="text-xl font-bold text-rose-700 mb-2">Team Result</h3>
+	          <p className="text-rose-800">actual turns: {turnCount}</p>
+	          <p className="text-rose-800">prediction: {predictionLimit}</p>
+	          <p className="text-rose-800">ships sunk: {enemyShips.filter(s => s.isSunk).length} / {enemyShips.length}</p>
 	        </div>
 	      )}
 
 
             <div className="bg-yellow-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-yellow-800 mb-4">💬 Nützliche Englische Sätze</h3>
+              <h3 className="text-xl font-bold text-yellow-800 mb-4">💬 Useful English Phrases</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-bold text-yellow-700 mb-2">Koordinaten ansagen:</h4>
+                  <h4 className="font-bold text-yellow-700 mb-2">Calling Coordinates:</h4>
                   <ul className="text-yellow-600 space-y-1">
-                    <li>• "I choose A5" - Ich wähle A5</li>
-                    <li>• "My target is B3" - Mein Ziel ist B3</li>
-                    <li>• "I shoot at C7" - Ich schieße auf C7</li>
+                    <li>• "I choose A5"</li>
+                    <li>• "My target is B3"</li>
+                    <li>• "I shoot at C7"</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-yellow-700 mb-2">Reaktionen:</h4>
+                  <h4 className="font-bold text-yellow-700 mb-2">Reactions:</h4>
                   <ul className="text-yellow-600 space-y-1">
-                    <li>• "Hit!" - Treffer!</li>
-                    <li>• "Miss!" - Verfehlt!</li>
-                    <li>• "You sunk my ship!" - Du hast mein Schiff versenkt!</li>
+                    <li>• "Hit!"</li>
+                    <li>• "Miss!"</li>
+                    <li>• "You sunk my ship!"</li>
                   </ul>
                 </div>
               </div>
@@ -844,17 +844,17 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">zug {turnCount + 1}</h2>
+              <h2 className="text-xl font-bold">Turn {turnCount + 1}</h2>
               <div className="text-sm text-gray-600">
-                modus: {gameMode === 'practice' ? 'übung' : gameMode === 'vsComputer' ? 'gegen computer' : 'zwei spieler'}
+                mode: {gameMode === 'practice' ? 'practice' : gameMode === 'vsComputer' ? 'vs computer' : 'two players'}
               </div>
             </div>
 
 
 	          {gameMode === 'teamChallenge' && predictionLimit != null && (
 	            <div className="flex items-center justify-center gap-4 mb-4">
-	              <div className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold">treffer: {stats.hits}</div>
-	              <div className="px-3 py-1 rounded-full bg-sky-100 text-sky-700 font-bold">fehlversuche: {stats.misses}</div>
+	              <div className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold">hits: {stats.hits}</div>
+	              <div className="px-3 py-1 rounded-full bg-sky-100 text-sky-700 font-bold">misses: {stats.misses}</div>
 	            </div>
 	          )}
 
@@ -864,7 +864,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
 	            {gameMode === 'teamChallenge' && (
 	              <button onClick={resetTeamChallenge} className="ml-2 bg-rose-200 hover:bg-rose-300 text-rose-800 font-bold py-2 px-4 rounded-lg">
-	                team-herausforderung zurücksetzen
+	                reset team challenge
 	              </button>
 	            )}
 
@@ -887,11 +887,11 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
             {professionalMode && hitLog.length > 0 && (
               <div className="bg-white border rounded-lg p-3 text-sm w-full">
-                <div className="font-bold mb-2">Treffer-Protokoll</div>
+                <div className="font-bold mb-2">Hit Log</div>
                 <ul className="max-h-32 overflow-auto list-disc pl-5 space-y-1">
                   {hitLog.slice().reverse().map((h, idx) => (
                     <li key={idx}>
-                      Zug {h.turn}: {h.coord} – {h.shipId ? `Schiff #${h.shipId} (Länge ${h.size})` : '—'} {h.sunk ? 'versenkt' : 'getroffen'}
+                      Turn {h.turn}: {h.coord} – {h.shipId ? `Ship #${h.shipId} (length ${h.size})` : '—'} {h.sunk ? 'sunk' : 'hit'}
                     </li>
                   ))}
                 </ul>
@@ -902,7 +902,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
               {professionalMode && (
                 <div className="flex items-center justify-center gap-3 mb-4">
                   {proShipSummary.items.map((cfg, i) => (
-                    <span key={i} className="px-2 py-1 bg-gray-100 rounded border text-xs">{cfg.count} × Länge {cfg.size}</span>
+                    <span key={i} className="px-2 py-1 bg-gray-100 rounded border text-xs">{cfg.count} × length {cfg.size}</span>
                   ))}
                   <span className="px-2 py-1 bg-gray-200 rounded text-xs font-bold">gesamt: {proShipSummary.total}</span>
                   {typeof proPrediction === 'number' && (
@@ -949,7 +949,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
             {gameMode !== 'practice' && (
               <div className="bg-white rounded-lg shadow-md p-4">
-                <h3 className="text-lg font-bold mb-3 text-center">Ihre Flotte</h3>
+                <h3 className="text-lg font-bold mb-3 text-center">Your Fleet</h3>
                 <div className="flex justify-center">
                   <div className="inline-block">
                     {/* Column numbers header */}
@@ -985,14 +985,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
       {gamePhase === 'gameOver' && (
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
-          <h2 className="text-2xl font-bold text-green-600 mb-4">🎉 Spiel Beendet!</h2>
+          <h2 className="text-2xl font-bold text-green-600 mb-4">🎉 Game Over!</h2>
           <p className="text-lg mb-6">{gameMessage}</p>
           <div className="space-x-4">
             <button
               onClick={() => setGamePhase('setup')}
               className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors"
             >
-              neues spiel
+              new game
             </button>
             <button
               onClick={onBack}
