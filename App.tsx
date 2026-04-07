@@ -14,7 +14,10 @@ import Module7LetterExplanation from './modules/Module6_LetterExplanation';
 import ModuleAlphabetOverview from './modules/ModuleAlphabetOverview';
 import ModuleSettings from './modules/ModuleSettings';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { useSettings } from './contexts/SettingsContext';
 import GameFiltersPanel from './components/GameFiltersPanel';
+import CommandPalette from './components/CommandPalette/CommandPalette';
+import { useEslCommands } from './components/CommandPalette/useEslCommands';
 import type { SessionWord, WordCategory } from './types';
 import { MIN_WORDS_FOR_GAMES } from './constants';
 
@@ -132,6 +135,55 @@ const App: React.FC = () => {
     <SessionVocabularyProvider value={{ sessionVocabulary, setSessionVocabulary }}>
       <GameFiltersProvider value={{ gameFilters, setGameFilters }}>
         <SettingsProvider>
+          <AppInner
+            activeModule={activeModule}
+            setActiveModule={setActiveModule}
+            sessionVocabulary={sessionVocabulary}
+            setSessionVocabulary={setSessionVocabulary}
+            isGameReady={isGameReady}
+            showGamesGrid={showGamesGrid}
+            setShowGamesGrid={setShowGamesGrid}
+            gameFilters={gameFilters}
+            setGameFilters={setGameFilters}
+            resetSetup={resetSetup}
+            gameItems={gameItems}
+            renderActiveModule={renderActiveModule}
+          />
+        </SettingsProvider>
+      </GameFiltersProvider>
+    </SessionVocabularyProvider>
+  );
+};
+
+const AppInner: React.FC<{
+  activeModule: number;
+  setActiveModule: (n: number) => void;
+  sessionVocabulary: SessionWord[];
+  setSessionVocabulary: React.Dispatch<React.SetStateAction<SessionWord[]>>;
+  isGameReady: boolean;
+  showGamesGrid: boolean;
+  setShowGamesGrid: (v: boolean) => void;
+  gameFilters: GameFilters;
+  setGameFilters: React.Dispatch<React.SetStateAction<GameFilters>>;
+  resetSetup: () => void;
+  gameItems: { id: number; name: string; icon: string; description: string }[];
+  renderActiveModule: () => React.ReactNode;
+}> = ({
+  activeModule, setActiveModule, sessionVocabulary, setSessionVocabulary,
+  isGameReady, showGamesGrid, setShowGamesGrid, gameFilters, setGameFilters,
+  resetSetup, gameItems, renderActiveModule,
+}) => {
+  const { settings, setSettings } = useSettings();
+
+  const { commands: paletteCommands, categoryLabels } = useEslCommands({
+    activeModule, setActiveModule, sessionVocabulary, setSessionVocabulary,
+    isGameReady, setShowGamesGrid, gameFilters, setGameFilters,
+    settings, setSettings, resetSetup,
+  });
+
+  const isEn = settings.ui.language === 'en';
+
+  return (
           <div className="bg-sky-100 min-h-screen text-slate-800 flex flex-col">
           <header className="bg-white shadow-md p-4 flex justify-between items-center">
             <div className="flex items-center space-x-4">
@@ -295,10 +347,18 @@ const App: React.FC = () => {
               renderActiveModule()
             )}
           </main>
+          <CommandPalette
+            commands={paletteCommands}
+            categoryLabels={categoryLabels}
+            storageKey="esl-lesson-cmd-palette-frecency"
+            openKey="k"
+            strings={{
+              placeholder: isEn ? 'Search commands…' : 'Befehle suchen…',
+              noResults: isEn ? 'No matching commands' : 'Keine Ergebnisse',
+              recent: isEn ? 'Recent' : 'Zuletzt verwendet',
+            }}
+          />
         </div>
-        </SettingsProvider>
-      </GameFiltersProvider>
-    </SessionVocabularyProvider>
   );
 };
 
