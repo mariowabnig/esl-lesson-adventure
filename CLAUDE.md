@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # ESL Lesson Adventure
 
 ## Required Reading
