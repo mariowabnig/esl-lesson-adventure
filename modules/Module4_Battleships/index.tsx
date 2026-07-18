@@ -98,13 +98,6 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   const parseCoordinate = (coord: string): { row: number; col: number } | null => {
     if (coord.length < 2) return null;
     const letter = coord.charAt(0).toUpperCase();
-  // Validate if a set of ship sizes can fit in a grid (rough check by total cells)
-  const validateFleetFits = (size: number, ships: number[]): string => {
-    const totalCells = ships.reduce((sum, s) => sum + s, 0);
-    if (totalCells > size * size * 0.6) return 'fleet may be too large (more than 60% of cells)';
-    if (ships.some(s => s > size)) return 'a ship is longer than the grid size';
-    return '';
-  };
     const number = parseInt(coord.slice(1));
 
     if (letter < 'A' || letter > String.fromCharCode(64 + gridSize)) return null;
@@ -114,6 +107,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
       row: letter.charCodeAt(0) - 65,
       col: number - 1
     };
+  };
+
+  // Validate if a set of ship sizes can fit in a grid (rough check by total cells)
+  const validateFleetFits = (size: number, ships: number[]): string => {
+    const totalCells = ships.reduce((sum, shipSize) => sum + shipSize, 0);
+    if (totalCells > size * size * 0.6) return 'fleet may be too large (more than 60% of cells)';
+    if (ships.some(shipSize => shipSize > size)) return 'a ship is longer than the grid size';
+    return '';
   };
 
   // Generate random ship placement
@@ -805,16 +806,6 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
               </div>
             </div>
 
-	      {gamePhase === 'gameOver' && gameMode === 'teamChallenge' && predictionLimit != null && (
-	        <div className="bg-rose-50 rounded-lg shadow-md p-6 text-center mb-4">
-	          <h3 className="text-xl font-bold text-rose-700 mb-2">Team Result</h3>
-	          <p className="text-rose-800">actual turns: {turnCount}</p>
-	          <p className="text-rose-800">prediction: {predictionLimit}</p>
-	          <p className="text-rose-800">ships sunk: {enemyShips.filter(s => s.isSunk).length} / {enemyShips.length}</p>
-	        </div>
-	      )}
-
-
             <div className="bg-yellow-50 rounded-lg p-6">
               <h3 className="text-xl font-bold text-yellow-800 mb-4">💬 Useful English Phrases</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -987,6 +978,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
         <div className="bg-white rounded-lg shadow-md p-6 text-center">
           <h2 className="text-2xl font-bold text-green-600 mb-4">🎉 Game Over!</h2>
           <p className="text-lg mb-6">{gameMessage}</p>
+          {gameMode === 'teamChallenge' && predictionLimit != null && (
+            <div className="bg-rose-50 rounded-lg p-4 mb-6">
+              <h3 className="text-xl font-bold text-rose-700 mb-2">Team Result</h3>
+              <p className="text-rose-800">actual turns: {turnCount}</p>
+              <p className="text-rose-800">prediction: {predictionLimit}</p>
+              <p className="text-rose-800">ships sunk: {enemyShips.filter(ship => ship.isSunk).length} / {enemyShips.length}</p>
+            </div>
+          )}
           <div className="space-x-4">
             <button
               onClick={() => setGamePhase('setup')}

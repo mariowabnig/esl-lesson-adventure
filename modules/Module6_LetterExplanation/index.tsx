@@ -116,10 +116,9 @@ const Module6LetterExplanation: React.FC = () => {
               </div>
 
               <div className={`inline-block px-4 py-2 rounded-full text-sm font-bold border-2 mb-6 ${
-                currentWord.category === 'fruits' ? 'bg-red-100 border-red-300 text-red-800' :
+                currentWord.category === 'food' ? 'bg-orange-100 border-orange-300 text-orange-800' :
                 currentWord.category === 'colors' ? 'bg-purple-100 border-purple-300 text-purple-800' :
                 currentWord.category === 'animals' ? 'bg-green-100 border-green-300 text-green-800' :
-                currentWord.category === 'numbers' ? 'bg-blue-100 border-blue-300 text-blue-800' :
                 'bg-gray-100 border-gray-300 text-gray-800'
               }`}>
                 Category: {currentWord.category}

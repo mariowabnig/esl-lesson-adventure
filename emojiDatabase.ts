@@ -224,6 +224,7 @@ export const EMOJI_DATABASE: Record<string, EmojiOption[]> = {
 // Function to search for emojis based on a word
 export function searchEmojis(word: string): EmojiOption[] {
   const searchWord = word.toLowerCase().trim();
+  if (!searchWord) return [];
   
   // Direct match
   if (EMOJI_DATABASE[searchWord]) {

@@ -8,8 +8,11 @@ export interface BingoCard {
 export const generateBingoCards = (
   words: SessionWord[], 
   gridSize: number = 4, 
-  numberOfCards: number = 6
+  numberOfCards: number = 6,
+  random: () => number = Math.random,
 ): BingoCard[] => {
+  if (!Number.isInteger(gridSize) || gridSize < 1) throw new RangeError('gridSize must be a positive integer');
+  if (!Number.isInteger(numberOfCards) || numberOfCards < 1) throw new RangeError('numberOfCards must be a positive integer');
   const cards: BingoCard[] = [];
   
   for (let cardId = 0; cardId < numberOfCards; cardId++) {
@@ -19,8 +22,11 @@ export const generateBingoCards = (
     };
     
     // Shuffle words for this card
-    const shuffledWords = [...words].sort(() => Math.random() - 0.5);
-    const wordsNeeded = gridSize * gridSize;
+    const shuffledWords = [...words];
+    for (let index = shuffledWords.length - 1; index > 0; index--) {
+      const swapIndex = Math.floor(random() * (index + 1));
+      [shuffledWords[index], shuffledWords[swapIndex]] = [shuffledWords[swapIndex], shuffledWords[index]];
+    }
     
     // Fill the grid
     for (let row = 0; row < gridSize; row++) {
