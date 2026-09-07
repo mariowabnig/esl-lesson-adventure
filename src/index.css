@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Command Palette Animations */
 @keyframes command-palette-in {
@@ -48,3 +48,20 @@
   }
 }
 
+
+/* Treasure Hunt setup and coordinate entry. */
+.treasure-controls { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: 16px; align-items: end; }
+.treasure-controls label { display: grid; gap: 6px; font-weight: 700; font-size: 14px; min-width: 0; }
+.treasure-controls select { width: 100%; min-width: 0; height: 46px; background: white; border-color: #cbd5e1; border-radius: 8px; padding: 8px 10px; }
+.treasure-controls > button { min-height: 46px; border-radius: 8px; font-weight: 800; }
+.treasure-controls > p { grid-column: 1 / -1; color: #64748b; font-size: 13px; }
+.coordinate-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; }
+.coordinate-controls input { min-height: 48px; width: 100%; max-width: 260px; }
+.coordinate-controls > button { min-height: 48px; border-radius: 8px; padding: 10px 24px; font-weight: 800; }
+.coordinate-controls > button:disabled { background: #e2e8f0; color: #64748b; }
+.coordinate-controls > p { flex-basis: 100%; font-size: 14px; color: #64748b; }
+
+@media (max-width: 480px) {
+  .treasure-controls { grid-template-columns: minmax(0,1fr); }
+  .coordinate-controls > label { width: 100%; }
+}

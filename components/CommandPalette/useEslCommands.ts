@@ -30,11 +30,12 @@ const MODULE_LABELS: { id: number; label: string; labelDe: string; icon: string 
   { id: 7, label: 'Bingo', labelDe: 'Bingo', icon: '🎯' },
   { id: 8, label: 'Word Review', labelDe: 'Wortrückblick', icon: '📖' },
   { id: 9, label: 'Settings', labelDe: 'Einstellungen', icon: '⚙️' },
+  { id: 11, label: 'Treasure Hunt', labelDe: 'Schatzsuche', icon: '💎' },
   { id: 10, label: 'Alphabet Overview', labelDe: 'Alphabetübersicht', icon: '🔎' },
 ];
 
 // Game modules that require MIN_WORDS_FOR_GAMES
-const GAME_MODULE_IDS = new Set([4, 5, 6, 7, 8]);
+const GAME_MODULE_IDS = new Set([4, 5, 6, 7, 8, 11]);
 
 export function useEslCommands({
   activeModule,

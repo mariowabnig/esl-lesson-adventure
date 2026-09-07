@@ -126,3 +126,20 @@ Module0_WordSelection
 - `bingoExport.ts` uses `window.open()` + `document.write()` for PDF printing — not a real PDF library, just a print dialog trigger.
 - Vocabulary is keyed by `letter + word` string concatenation — no UUID. Duplicate word+letter combinations are not prevented by the data model.
 - `SettingsContext` default UI language is `'de'` (German) — the app is bilingual (DE teacher interface, EN student content).
+
+## September 2026 update
+
+- Module 11: `ModuleTreasureHunt`, also registered in the command palette. Cooperative
+  coordinate exploration with treasures of different sizes, each occupying 2–4
+  horizontal or vertical cells. Treasures are separated, including diagonally.
+  Setup supports 4–16-square sides and 0–6 treasures of each size. Active rounds
+  retain their starting settings. Optional computer play alternates turns on a
+  shared map and awards each treasure to the explorer uncovering its last square.
+- `utils/treasureGame.ts`: pure ownership updates and computer move selection from
+  revealed hits/misses only. The module cancels its delayed computer move when a
+  round ends, restarts or unmounts.
+- `utils/coordinates.ts`: strict coordinate parser and
+  bounded backtracking placement with cached candidates and a separated-row fallback.
+  It either places every treasure or reports failure; it never drops treasures.
+- Tailwind styles are compiled locally through the Vite entrypoint. Legacy CDN
+  and import-map scripts are removed to avoid duplicate runtime dependencies.

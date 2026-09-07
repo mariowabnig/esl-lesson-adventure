@@ -3,6 +3,7 @@ import { SessionVocabularyProvider } from './contexts/SessionVocabularyContext';
 import { GameFiltersProvider, type GameFilters } from './contexts/GameFiltersContext';
 import Module0WordSelection from './modules/Module0_WordSelection';
 import ModuleWordList from './modules/ModuleWordList';
+import ModuleTreasureHunt from './modules/ModuleTreasureHunt';
 import ModuleNumbers from './modules/ModuleNumbers';
 import Module1AlphabetCreator from './modules/Module1_AlphabetCreator';
 import Module2MemoryBomb from './modules/Module2_MemoryBomb';
@@ -114,6 +115,8 @@ const App: React.FC = () => {
         return <Module4Bingo />;
       case 8:
         return <Module5WordReview />;
+      case 11:
+        return <ModuleTreasureHunt />;
       case 10:
         return <ModuleAlphabetOverview sessionVocabulary={sessionVocabulary} />;
       case 9:
@@ -124,6 +127,7 @@ const App: React.FC = () => {
   };
 
   const gameItems = [
+    { id: 11, name: 'Treasure Hunt', icon: '💎', description: 'Choose your map and treasures; play together or vs computer' },
     { id: 4, name: 'Memory', icon: '🧠', description: 'Match pairs to test your memory' },
     { id: 5, name: 'Rocket Launch', icon: '🚀', description: 'Guess the word before launch' },
     { id: 6, name: 'Battleships', icon: '🚢', description: 'Say coordinates in English to sink ships' },
@@ -309,7 +313,7 @@ const AppInner: React.FC<{
           </header>
 
           {/* Game Filters Panel - only show when games are ready and not in Module 1 */}
-          {isGameReady && activeModule !== 1 && (
+          {isGameReady && activeModule !== 1 && activeModule !== 11 && (
             <div className="p-4">
               <GameFiltersPanel />
             </div>
