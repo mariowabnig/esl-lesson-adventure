@@ -4,6 +4,15 @@ import { SessionWord, Word, WordCategory, ALPHABET, DEFAULT_ALPHABET_WORDS, CATE
 import { MIN_WORDS_FOR_GAMES } from '../../constants';
 import ImageRenderer from '../../components/ImageRenderer';
 
+// Child-friendly approximations read using German spelling; not phonetic notation.
+const LETTER_SOUNDS: Record<string, string> = {
+  A: 'ey', B: 'bie', C: 'sie', D: 'die', E: 'ie', F: 'eff',
+  G: 'dschie', H: 'eytsch', I: 'ai', J: 'dschey', K: 'key', L: 'ell',
+  M: 'emm', N: 'enn', O: 'ou', P: 'pie', Q: 'kju:', R: 'a:',
+  S: 'ess', T: 'tie', U: 'ju:', V: 'wie', W: 'dabbel-ju:',
+  X: 'eks', Y: 'wai', Z: 'sie',
+};
+
 interface WordSelectionProps {
   sessionVocabulary: SessionWord[];
   onWordsUpdate: (words: SessionWord[]) => void;
@@ -156,17 +165,20 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
 
       {/* Letter Selection Grid */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-2xl font-bold text-center mb-6">Select a Letter</h2>
-        <div className="grid grid-cols-6 md:grid-cols-9 lg:grid-cols-13 gap-3">
+        <h2 className="text-2xl font-bold text-center mb-2">Select a Letter</h2>
+        <p className="text-center text-sm text-slate-600 mb-5" lang="de">
+          So klingt der Buchstabe: Lies die kleine Hilfe wie ein deutsches Wort. Ein „:“ heißt: lang sprechen.
+          Bei Z steht hier „sie“ wie im amerikanischen Englisch; im britischen Englisch heißt es „sed“.
+        </p>
+        <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))' }}>
           {ALPHABET.map(letter => {
             const letterWordCount = sessionVocabulary.filter(w => w.letter === letter).length;
             const isSelected = letter === selectedLetter;
 
             return (
-              <button
+              <div
                 key={letter}
-                onClick={() => setSelectedLetter(letter)}
-                className={`relative p-4 rounded-lg border-2 transition-all transform hover:scale-105 ${
+                className={`relative p-3 rounded-lg border-2 transition-all transform hover:scale-105 ${
                   isSelected
                     ? 'border-blue-500 bg-blue-50 shadow-lg'
                     : letterWordCount > 0
@@ -174,7 +186,16 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
                     : 'border-gray-300 bg-gray-50 hover:border-gray-400'
                 }`}
               >
-                <div className="text-3xl font-bold text-blue-600 mb-2">{letter}</div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLetter(letter)}
+                  aria-pressed={isSelected}
+                  aria-label={`${letter} auswählen, Aussprache: ${LETTER_SOUNDS[letter]}`}
+                  className="block w-full rounded text-center py-1"
+                >
+                  <span className="block text-3xl font-bold text-blue-600">{letter}</span>
+                  <span className="block text-sm font-bold text-slate-600 mt-1 whitespace-nowrap" lang="de">{LETTER_SOUNDS[letter]}</span>
+                </button>
                 {letterWordCount > 0 && (
                   <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
                     {letterWordCount}
@@ -190,7 +211,8 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
                     handlePronunciationChange(letter, e.target.value);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  placeholder="Deutsche Aussprache..."
+                  placeholder="Eigene Notiz"
+                  aria-label={`Eigene Aussprache-Notiz für ${letter}`}
                   className="w-full mt-2 px-2 py-1 text-xs border border-gray-300 rounded text-center"
                 />
 
@@ -200,7 +222,7 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
 	            {lastWordByLetter[letter] ?? '—'}
 	          </span>
 	        </div>
-              </button>
+              </div>
             );
           })}
         </div>

@@ -92,3 +92,8 @@ Battleships animates water, hits and every cell of a newly sunk ship. Its final
 board remains visible, with shooting disabled after game over. All new effects
 respect reduced motion. Verification includes word-completion regression tests
 and browser checks for rocket win/loss, view switching, navigation and ship effects.
+
+Word Selection shows a short German-spelling pronunciation aid under each A–Z
+button (e.g. C = sie, P = pie), without IPA. A colon marks a long sound. Z follows
+the app's American English voice (sie); the explanatory note also gives British
+sed. These letter-name hints are separate from editable vocabulary notes.
