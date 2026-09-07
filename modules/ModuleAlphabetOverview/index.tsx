@@ -40,7 +40,7 @@ const ModuleAlphabetOverview: React.FC<Props> = ({ sessionVocabulary }) => {
                         <ImageRenderer image={w.image} alt={w.word} className="max-w-full max-h-full" />
                       </div>
                       <div>
-                        <div className="font-semibold capitalize">{w.word}</div>
+                        <div className="font-semibold lowercase">{w.word.toLowerCase()}</div>
                         {w.pronunciation && (
                           <div className="text-xs text-gray-500">Pronunciation: {w.pronunciation}</div>
                         )}

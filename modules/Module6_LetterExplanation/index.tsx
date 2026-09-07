@@ -42,6 +42,7 @@ const Module6LetterExplanation: React.FC = () => {
       const utterance = new SpeechSynthesisUtterance(
         `${currentLetter} is for ${currentWord.word}`
       );
+      utterance.lang = 'en-US';
       utterance.rate = 0.8;
       utterance.pitch = 1.1;
       speechSynthesis.speak(utterance);
@@ -112,7 +113,7 @@ const Module6LetterExplanation: React.FC = () => {
               </div>
 
               <div className="text-4xl font-bold text-slate-700 mb-4">
-                {currentLetter} is for <span className="text-blue-600 capitalize">{currentWord.word}</span>
+                {currentLetter} is for <span className="text-blue-600 lowercase">{currentWord.word.toLowerCase()}</span>
               </div>
 
               <div className={`inline-block px-4 py-2 rounded-full text-sm font-bold border-2 mb-6 ${

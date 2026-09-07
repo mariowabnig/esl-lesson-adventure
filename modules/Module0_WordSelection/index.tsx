@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 
 import { SessionWord, Word, WordCategory, ALPHABET, DEFAULT_ALPHABET_WORDS, CATEGORY_COLORS } from '../../types';
+import { MIN_WORDS_FOR_GAMES } from '../../constants';
 import ImageRenderer from '../../components/ImageRenderer';
 
 interface WordSelectionProps {
@@ -121,7 +122,7 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
         <div className="mt-4 flex items-center justify-center gap-3 flex-wrap">
           <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg">
             <span className="font-bold">{sessionVocabulary.length} words selected</span>
-            {sessionVocabulary.length >= 10 && <span className="ml-2">✅ Ready for games!</span>}
+            {sessionVocabulary.length >= MIN_WORDS_FOR_GAMES && <span className="ml-2">✅ Ready for games!</span>}
           </div>
 
           {/* Auto-Fill Controls */}
@@ -195,7 +196,7 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
 
 	        {/* Most recent chosen word preview below each letter */}
 	        <div className="mt-2 text-center text-xs text-gray-600">
-	          <span className="inline-block px-2 py-1 rounded bg-blue-50 border border-blue-200 capitalize">
+	          <span className="inline-block px-2 py-1 rounded bg-blue-50 border border-blue-200 lowercase">
 	            {lastWordByLetter[letter] ?? '—'}
 	          </span>
 	        </div>
@@ -221,11 +222,11 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
                 return (
                   <div key={index} className={`flex items-center justify-between rounded-lg p-3 ${isLast ? 'bg-yellow-100 border-2 border-yellow-400 shadow-lg' : 'bg-gray-50'}`}>
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 flex items-center justify-center">
+                      <div className="w-14 h-14 shrink-0 flex items-center justify-center">
                         <ImageRenderer image={word.image} alt={word.word} className="max-w-full max-h-full" />
                       </div>
                       <div>
-                        <div className="font-medium capitalize">{word.word}</div>
+                        <div className="font-medium lowercase">{word.word.toLowerCase()}</div>
                         <div className={`text-xs px-2 py-1 rounded-full inline-block ${CATEGORY_COLORS[word.category]}`}>
                           {word.category}
                         </div>
@@ -304,11 +305,11 @@ const Module0_WordSelection: React.FC<WordSelectionProps> = ({ sessionVocabulary
                     onClick={() => handleAddPredefinedWord(word)}
                     className="flex items-center space-x-3 p-3 border border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors"
                   >
-                    <div className="w-8 h-8 flex items-center justify-center">
+                    <div className="w-14 h-14 shrink-0 flex items-center justify-center">
                       <ImageRenderer image={word.image} alt={word.word} className="max-w-full max-h-full" />
                     </div>
                     <div className="flex-grow text-left">
-                      <div className="font-medium capitalize">{word.word}</div>
+                      <div className="font-medium lowercase">{word.word.toLowerCase()}</div>
                       <div className={`text-xs px-2 py-1 rounded-full inline-block ${CATEGORY_COLORS[word.category]}`}>
                         {word.category}
                       </div>

@@ -137,7 +137,7 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
               <div className="flex gap-2 flex-wrap">
                 {availablePredefined.slice(0, 5).map((w, i) => (
                   <button key={w.word} onClick={() => handleAddPredefined(w)} className="px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded-full text-sm">
-                    {w.word}
+                    {w.word.toLowerCase()}
                   </button>
                 ))}
                 {availablePredefined.length === 0 && <div className="text-xs text-gray-500">No suggestions</div>}
@@ -219,11 +219,11 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
                   {words.map((word, index) => (
                     <div key={`${word.word}-${index}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 group">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 flex items-center justify-center">
+                        <div className="w-14 h-14 shrink-0 flex items-center justify-center">
                           <ImageRenderer image={word.image} alt={word.word} className="max-w-full max-h-full" />
                         </div>
                         <div>
-                          <div className="font-medium capitalize">{word.word}</div>
+                          <div className="font-medium lowercase">{word.word.toLowerCase()}</div>
                           <select
                             value={word.category}
                             onChange={(e) => handleCategoryChange(word, e.target.value as WordCategory)}
@@ -269,11 +269,11 @@ const ModuleWordList: React.FC<WordListProps> = ({ sessionVocabulary, onWordsUpd
                   {words.map((word, index) => (
                     <div key={`${word.word}-${index}`} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 group">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 flex items-center justify-center">
+                        <div className="w-14 h-14 shrink-0 flex items-center justify-center">
                           <ImageRenderer image={word.image} alt={word.word} className="max-w-full max-h-full" />
                         </div>
                         <div>
-                          <div className="font-medium capitalize">{word.word}</div>
+                          <div className="font-medium lowercase">{word.word.toLowerCase()}</div>
                           <div className="text-xs text-gray-500">Letter: {word.letter}</div>
                         </div>
                       </div>

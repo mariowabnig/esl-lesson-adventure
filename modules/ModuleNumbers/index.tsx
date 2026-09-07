@@ -231,19 +231,19 @@ const ModuleNumbers: React.FC<NumbersModuleProps> = ({ onBack }) => {
 
       {/* Instructions */}
       <div className="mt-12 bg-blue-50 rounded-lg p-6">
-        <h2 className="text-xl font-bold text-blue-800 mb-4">📚 How to Use Numbers Learning</h2>
+        <h2 className="text-xl font-bold text-blue-800 mb-4">📚 So übt ihr die Zahlen</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
           <div>
             <h3 className="font-bold text-blue-700 mb-2">👀 View Mode</h3>
-            <p className="text-blue-600">See numbers with their English words and pronunciation guides. Click 🔊 to hear each number spoken aloud.</p>
+            <p className="text-blue-600">Schaut euch die Zahlen, ihre englischen Wörter und die Aussprachehilfen an. Klickt auf 🔊, um eine Zahl zu hören.</p>
           </div>
           <div>
             <h3 className="font-bold text-blue-700 mb-2">🔊 Listen Mode</h3>
-            <p className="text-blue-600">Practice listening! Click on any number card to hear its pronunciation. Perfect for audio learning.</p>
+            <p className="text-blue-600">Übt das Zuhören: Klickt auf eine Zahlenkarte und hört euch die englische Aussprache an.</p>
           </div>
           <div>
             <h3 className="font-bold text-blue-700 mb-2">🎯 Quiz Mode</h3>
-            <p className="text-blue-600">Test your knowledge! See a number and type the English word. Track your progress with the score counter.</p>
+            <p className="text-blue-600">Testet euer Wissen: Schreibt zur angezeigten Zahl das englische Wort. Der Punktezähler zeigt euren Fortschritt.</p>
           </div>
         </div>
       </div>

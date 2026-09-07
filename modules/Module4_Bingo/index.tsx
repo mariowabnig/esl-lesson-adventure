@@ -136,6 +136,7 @@ const Module4Bingo: React.FC = () => {
             setTurnCount(prev => prev + 1);
             if (settings.audio.global && settings.audio.bingo && speechSynth.current) {
                 const utterance = new SpeechSynthesisUtterance(`${nextWord.letter} is for ${nextWord.word}`);
+                utterance.lang = 'en-US';
                 speechSynth.current.speak(utterance);
             }
         }
@@ -231,6 +232,7 @@ const Module4Bingo: React.FC = () => {
 
     return (
         <ModuleContainer title="BINGO">
+            <p className="mb-6 rounded-lg bg-blue-50 p-4 text-blue-900" lang="de">Lasst ein englisches Wort aufrufen und markiert es auf eurer Karte. Eine vollständige waagrechte, senkrechte oder diagonale Reihe ergibt Bingo. Im Übungsmodus könnt ihr nur bereits aufgerufene Wörter markieren.</p>
             {/* Game Mode Selection */}
             <div className="mb-6 bg-white rounded-lg shadow-md p-4">
                 <h3 className="text-lg font-bold mb-3 text-center">Spielmodus wählen:</h3>
@@ -290,7 +292,7 @@ const Module4Bingo: React.FC = () => {
                                         }`}
                                     >
                                         <ImageRenderer image={word.image} alt={word.word} className="w-8 h-8 mb-1" />
-                                        <span className="text-xs font-bold text-center">{word.word}</span>
+                                        <span className="text-xs font-bold text-center">{word.word.toLowerCase()}</span>
                                     </div>
                                 );
                             })}
@@ -362,7 +364,7 @@ const Module4Bingo: React.FC = () => {
                              <div className="my-6 h-64 w-64 bg-white rounded-lg shadow-md flex items-center justify-center">
                                 <ImageRenderer image={currentWord.image} alt={currentWord.word} className="w-56 h-56 object-contain" />
                             </div>
-                            <p className="font-display text-4xl text-slate-700 capitalize">is for <span className="text-blue-600">{currentWord.word}</span></p>
+                            <p className="font-display text-4xl text-slate-700 lowercase">is for <span className="text-blue-600">{currentWord.word.toLowerCase()}</span></p>
                         </div>
                             {/* Prediction input under the card */}
                             <div className="mt-4">
@@ -408,7 +410,7 @@ const Module4Bingo: React.FC = () => {
                                 {calledWords.slice().reverse().map(word => (
                                     <li key={word.word} className="flex items-center bg-white p-2 rounded-lg shadow-sm">
                                         <ImageRenderer image={word.image} alt={word.word} className="w-8 h-8 mr-3 !text-2xl"/>
-                                        <span className="font-semibold text-slate-700 capitalize">{word.word}</span>
+                                        <span className="font-semibold text-slate-700 lowercase">{word.word.toLowerCase()}</span>
                                     </li>
                                 ))}
                             </ul>

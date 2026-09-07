@@ -138,8 +138,37 @@ Module0_WordSelection
 - `utils/treasureGame.ts`: pure ownership updates and computer move selection from
   revealed hits/misses only. The module cancels its delayed computer move when a
   round ends, restarts or unmounts.
-- `utils/coordinates.ts`: strict coordinate parser and
+- `utils/coordinates.ts`: strict coordinate parser shared with Battleships, plus
   bounded backtracking placement with cached candidates and a separated-row fallback.
   It either places every treasure or reports failure; it never drops treasures.
-- Tailwind styles are compiled locally through the Vite entrypoint. Legacy CDN
-  and import-map scripts are removed to avoid duplicate runtime dependencies.
+- Vite and Tailwind are bundled locally; legacy CDN/import-map scripts were removed.
+- Test runner is now Vitest (`npm test`); `npm run typecheck` is available. Older
+  statements above about no test runner and older stack versions are historical.
+- Fixed the event-handler hook crash on Battleships hits and malformed coordinate
+  acceptance. Word Selection now uses the same 15-word threshold as navigation.
+- Vocabulary persistence waits until initial loading completes and stores empty lists,
+  so clearing words cannot revive an older list on reload.
+- Classroom navigation uses a responsive six/three/two-column grid with separate
+  Settings/Reset utilities. Scoped layout rules live at the end of `src/index.css`.
+  Activity navigation closes the Games menu before displaying the chosen module.
+
+- Prepared pictures: 24 static JPEGs in `public/word-pictures/`, resolved by word
+  in `utils/wordPictures.ts` at render time. This upgrades previously saved emoji
+  vocabulary without rewriting localStorage. `ImageRenderer` supports data images
+  and library paths, falling back to an emoji on load failure. Bingo export uses
+  the same resolver and waits for image decoding before printing.
+
+- Word picker picture slots are 56 × 56 px. Emoji use a square SVG text viewport
+  so they scale with the same slot as illustrations instead of overflowing with a
+  fixed font size. Explicit flashcard sizes continue to control both formats.
+
+## Game interaction update
+
+- `AppInner` owns a sticky return-to-games control and an isolated, positioned
+  activity wrapper. Activity-local overlays cannot cover global navigation.
+- Rocket Launch uses a single filtered/deduplicated word pool, inline end-of-round
+  feedback and two SVG views (space/line art). The view switch does not reset
+  guesses. `utils/wordGuess.ts` defines A–Z guesses and punctuation-aware completion.
+- Battleships updates a copied fleet when sinking ships. State-keyed icon spans
+  animate hit/miss/sunk transitions once; the final grid stays mounted at game over.
+- New CSS effects use finite animation durations and honour reduced motion.

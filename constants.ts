@@ -1,4 +1,5 @@
 import type { AlphabetData, WordCategory } from './types';
+import { PICTURE_WORDS, fallbackWordEmoji } from './utils/wordPictures';
 
 export const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 export const MIN_WORDS_FOR_GAMES = 15;
@@ -156,6 +157,16 @@ export const DEFAULT_ALPHABET_WORDS: AlphabetData = {
     { word: 'zoo', image: '🦁', category: 'other' },
   ],
 };
+
+// Offer the prepared vocabulary in both word pickers, without duplicating old entries.
+const picturedAnimals = new Set(['butterfly', 'cat', 'dinosaur', 'dog', 'dragon', 'elephant', 'fish', 'hamster', 'horse', 'lion', 'rabbit']);
+const picturedFoods = new Set(['apple', 'banana', 'cake', 'ice cream', 'pizza']);
+for (const word of PICTURE_WORDS) {
+  const words = DEFAULT_ALPHABET_WORDS[word[0].toUpperCase()];
+  if (!words.some(entry => entry.word.toLowerCase() === word)) {
+    words.push({ word, image: fallbackWordEmoji(word, '📝'), category: picturedAnimals.has(word) ? 'animals' : picturedFoods.has(word) ? 'food' : 'other' });
+  }
+}
 
 export const ROCKET_PARTS: string[] = [
   'M45,85 L55,85 L55,50 L45,50 Z', // Main body

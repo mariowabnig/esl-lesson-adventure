@@ -154,7 +154,7 @@ const Module1AlphabetCreator: React.FC<Module1AlphabetCreatorProps> = ({ onSetup
                         <div className="flex flex-wrap gap-2">
                           {wordsForLetter.map(([key, word]) => (
                             <div key={key} className="flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-2 hover:bg-gray-200 transition-colors">
-                              <div className="text-sm font-medium">{word.word}</div>
+                              <div className="text-sm font-medium">{word.word.toLowerCase()}</div>
                               <div className={`text-xs px-2 py-1 rounded-full ${CATEGORY_COLORS[word.category]}`}>
                                 {word.category}
                               </div>
@@ -279,7 +279,7 @@ const Module1AlphabetCreator: React.FC<Module1AlphabetCreatorProps> = ({ onSetup
                           <div key={key} className="flex items-center justify-between bg-white bg-opacity-70 rounded px-3 py-2 group">
                             <div className="flex items-center space-x-2">
                               <div className="text-sm font-bold text-blue-600">{word.letter}</div>
-                              <div className="text-sm font-medium">{word.word}</div>
+                              <div className="text-sm font-medium">{word.word.toLowerCase()}</div>
                             </div>
                             <div className="flex items-center space-x-1">
                               <select

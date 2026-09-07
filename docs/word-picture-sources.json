@@ -1,0 +1,103 @@
+{
+  "created": "2026-09-06",
+  "generator": "Codex built-in image generation",
+  "style": "Simple colourful storybook illustration, white background, no labels",
+  "images": [
+    {
+      "word": "apple",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-9786c0d2-30bd-4380-a2d5-05839a2d39f8.png"
+    },
+    {
+      "word": "banana",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-49fd5d9e-ddc1-4ddf-8b21-3d5d12598812.png"
+    },
+    {
+      "word": "bicycle",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-5af30cf4-332c-4578-bbf2-9bc8bdc17b9c.png"
+    },
+    {
+      "word": "book",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-c9ef2f58-c032-4ab6-926b-ddecc73a72a1.png"
+    },
+    {
+      "word": "butterfly",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-69e6135b-53a3-4fae-b3fc-3f67af05f88a.png"
+    },
+    {
+      "word": "cake",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-ff0b38c5-ef1b-43dc-9206-1cbe621b7a44.png"
+    },
+    {
+      "word": "car",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-4518f6d9-3924-45d6-8bfa-8367c8aa357e.png"
+    },
+    {
+      "word": "cat",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-26ae15a6-d1ef-40d8-9d30-100ad47ebb9d.png"
+    },
+    {
+      "word": "dinosaur",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-c0fe9941-263c-451b-9e38-011766167085.png"
+    },
+    {
+      "word": "dog",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-733e3010-decc-411b-b8ea-3d130723a2af.png"
+    },
+    {
+      "word": "dragon",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-98837c14-78d2-427f-a952-749dadaa4e79.png"
+    },
+    {
+      "word": "elephant",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-991b98c4-7ae2-4b57-8780-b89f531f0964.png"
+    },
+    {
+      "word": "fish",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-51b91f22-58bc-4726-b6c6-af3feae53dd6.png"
+    },
+    {
+      "word": "football",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-cbff566c-dc2d-43a1-ae45-8338d5a477d5.png"
+    },
+    {
+      "word": "hamster",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-aa97dcd3-38fb-4d86-8493-ec4a424ab219.png"
+    },
+    {
+      "word": "horse",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-ffd07b5f-9f1d-4d3d-84a7-8eb646491533.png"
+    },
+    {
+      "word": "ice cream",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-bb080b78-b3d3-47b1-91f0-8c3f13b34433.png"
+    },
+    {
+      "word": "lion",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-1b1e50fd-b257-48ee-a2bc-aa9effe7d3c8.png"
+    },
+    {
+      "word": "pencil",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-1f0c441c-b0d9-4ff6-9c4c-54d346d5d5f9.png"
+    },
+    {
+      "word": "pizza",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-92a9ebdc-d9de-42cb-8d9a-3a09f90c31dc.png"
+    },
+    {
+      "word": "rabbit",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-a2828d46-d40a-4161-837e-b53dbc729be0.png"
+    },
+    {
+      "word": "robot",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-a99baf6e-c98d-497f-a39a-a8e5d1a6ca21.png"
+    },
+    {
+      "word": "school bag",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-9b113b6a-8142-4707-a856-ab26311f9004.png"
+    },
+    {
+      "word": "teddy bear",
+      "source": "/Users/mariowabnig/.codex/generated_images/01a07631-95da-7a12-81d1-60af60ec6041/exec-ea0da5fd-1064-429a-9d83-878997a96000.png"
+    }
+  ]
+}

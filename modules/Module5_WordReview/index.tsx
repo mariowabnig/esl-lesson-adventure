@@ -22,7 +22,7 @@ const FlippableCard: React.FC<{ word: SessionWord }> = ({ word }) => {
 
                 {/* Back of card (Word) */}
                 <div className="absolute w-full h-full rotate-y-180 backface-hidden flex items-center justify-center rounded-xl bg-sky-200 shadow-lg cursor-pointer">
-                    <span className="text-3xl font-bold text-sky-800 capitalize">{word.word}</span>
+                    <span className="text-3xl font-bold text-sky-800 lowercase">{word.word.toLowerCase()}</span>
                 </div>
             </div>
         </div>

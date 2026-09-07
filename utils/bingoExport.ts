@@ -1,4 +1,14 @@
 import type { SessionWord } from '../types';
+import { resolveWordImage, isImageSource } from './wordPictures';
+
+const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
+
+export function bingoImageHtml(word: SessionWord): string {
+  const source = resolveWordImage(word.word, word.image);
+  return isImageSource(source)
+    ? `<img src="${escapeHtml(source)}" alt="${escapeHtml(word.word)}" style="width:40px;height:40px;object-fit:contain">`
+    : escapeHtml(source);
+}
 
 export interface BingoCard {
   id: number;
@@ -121,7 +131,7 @@ export const exportBingoCardsToPDF = (cards: BingoCard[]): void => {
         .cell-word {
           font-size: 10px;
           font-weight: bold;
-          text-transform: capitalize;
+          text-transform: lowercase;
         }
         @media print {
           body { margin: 0; padding: 10px; }
@@ -140,9 +150,9 @@ export const exportBingoCardsToPDF = (cards: BingoCard[]): void => {
               ${card.words.flat().map(word => `
                 <div class="bingo-cell">
                   ${word ? `
-                    <div class="cell-letter">${word.letter}</div>
-                    <div class="cell-emoji">${word.image}</div>
-                    <div class="cell-word">${word.word}</div>
+                    <div class="cell-letter">${escapeHtml(word.letter)}</div>
+                    <div class="cell-emoji">${bingoImageHtml(word)}</div>
+                    <div class="cell-word">${escapeHtml(word.word.toLowerCase())}</div>
                   ` : '<div style="color: #ccc;">Empty</div>'}
                 </div>
               `).join('')}
@@ -158,8 +168,7 @@ export const exportBingoCardsToPDF = (cards: BingoCard[]): void => {
   printWindow.document.write(html);
   printWindow.document.close();
   
-  // Auto-print after a short delay
-  setTimeout(() => {
-    printWindow.print();
-  }, 500);
+  // Give pictures time to finish before opening the print dialog.
+  void Promise.all(Array.from(printWindow.document.images).map(img => img.decode().catch(() => undefined)))
+    .then(() => { if (!printWindow.closed) printWindow.print(); });
 };

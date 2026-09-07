@@ -37,8 +37,58 @@ to the next round.
 
 Vocabulary/settings are saved in the current browser, not shared with other visitors.
 
-## Verification
+Spoken English in Numbers, Word List Simple and Bingo explicitly uses `en-US`,
+independently of the interface or browser language.
 
-- `npm test` — regression tests.
+## Verification and hosting
+
+- `npm test` — game utility regression tests.
 - `npm run typecheck` — TypeScript validation.
 - `npm run build` — production assets in `dist/`.
+- Deploy the built static assets with Vercel; no backend or API key is needed.
+  First link the build folder explicitly (Vite rebuilds remove that link):
+  `npx vercel link --cwd dist --project esl-lesson-adventure --yes --scope mariowabnigs-projects`
+  Then `npx vercel deploy dist --prod --scope mariowabnigs-projects`.
+  Never deploy an unlinked `dist` folder: it can create a separate project named dist.
+- Rebuild before deploying changes. Vercel connected the existing GitHub repository. Local edits must be committed and pushed separately to reach GitHub; CLI deployments publish the current build.
+
+Live website: https://esl-lesson-adventure.vercel.app
+
+## Prepared word pictures
+
+24 generated illustrations are bundled with the website in `public/word-pictures/`.
+They appear automatically for matching words in the word picker, saved vocabulary,
+alphabet overview, picture games and printable Bingo. Type a matching custom word
+(e.g. hamster or schoolbag) to use its picture immediately. Bike, backpack,
+ice-cream, teddy and soccer ball are also recognised. Other words retain emoji
+support. No image API key or generation step is needed in class.
+
+The full list and generation provenance are in `docs/word-picture-sources.json`.
+Word matching and image fallback are shared in `utils/wordPictures.ts`; supplied
+data images are preserved. Use `npm test` to check aliases and asset completeness.
+
+Vocabulary is displayed in lowercase across word lists, flashcards, games and Bingo
+printouts. Alphabet buttons and coordinate labels retain uppercase letters.
+
+Game menu descriptions and game instructions are in German; English vocabulary,
+coordinate practice and spoken example phrases remain in English. Treasure Hunt
+animates each revealed miss (leaf), partial find (diamond), and all cells of a
+collected treasure (stars). Effects run once per move, reset with a new round,
+and respect the system's reduced-motion preference.
+
+Every game has a sticky **Zurück zu den Spielen** button. Game overlays are scoped
+to their activity so the return button and lesson navigation remain accessible.
+Battleships' own back buttons also return to the game selection.
+
+**Guess the Word / Rocket Launch** offers **Weltraum** (illustrated space scene)
+and **Linienzeichnung** (original line-art rocket). Switching views preserves the
+round. Both build toward the selected mistake limit and animate lift-off; correct
+letters reveal with a pop and guessed keys show a tick or cross. Results stay
+inside the game, with hints disabled after the round. Word filters restart the
+round, honour minimum length, and show an empty state when nothing matches.
+Spaces and punctuation are visible clues, so multiword vocabulary is solvable.
+
+Battleships animates water, hits and every cell of a newly sunk ship. Its final
+board remains visible, with shooting disabled after game over. All new effects
+respect reduced motion. Verification includes word-completion regression tests
+and browser checks for rocket win/loss, view switching, navigation and ship effects.

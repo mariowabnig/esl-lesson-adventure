@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { parseGridCoordinate } from '../../utils/coordinates';
 import { SessionWord } from '../../types';
 
 type GameMode = 'practice' | 'vsComputer' | 'twoPlayer' | 'teamChallenge';
@@ -95,19 +96,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   };
 
   // Parse coordinate string back to row/col
-  const parseCoordinate = (coord: string): { row: number; col: number } | null => {
-    if (coord.length < 2) return null;
-    const letter = coord.charAt(0).toUpperCase();
-    const number = parseInt(coord.slice(1));
-
-    if (letter < 'A' || letter > String.fromCharCode(64 + gridSize)) return null;
-    if (number < 1 || number > gridSize) return null;
-
-    return {
-      row: letter.charCodeAt(0) - 65,
-      col: number - 1
-    };
-  };
+  const parseCoordinate = (coord: string) => parseGridCoordinate(coord, gridSize);
 
   // Validate if a set of ship sizes can fit in a grid (rough check by total cells)
   const validateFleetFits = (size: number, ships: number[]): string => {
@@ -205,6 +194,9 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
     setGamePhase(gameMode === 'practice' || gameMode === 'teamChallenge' ? 'playing' : 'placement');
     setCurrentPlayer(1);
     setTurnCount(0);
+    setShotsTaken(0);
+    setHitLog([]);
+    setSelectedCoordinate('');
     setGameMessage('');
 
     if (gameMode === 'practice' || gameMode === 'teamChallenge') {
@@ -222,6 +214,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
   // Handle coordinate input
   const handleCoordinateSubmit = () => {
+    if (gamePhase !== 'playing') return;
     const coord = parseCoordinate(selectedCoordinate);
     if (!coord) {
       setGameMessage('Invalid coordinate! Use format like "A5" or "B3"');
@@ -236,28 +229,27 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
     }
 
     // Make the shot
-    const newEnemyGrid = [...enemyGrid];
+    const newEnemyGrid = enemyGrid.map(row => row.map(cell => ({ ...cell })));
     newEnemyGrid[row][col].isHit = true;
+    const nextEnemyShips = enemyShips.map(ship => ({ ...ship }));
 
     if (newEnemyGrid[row][col].hasShip) {
       newEnemyGrid[row][col].state = 'hit';
       setGameMessage(`Hit at ${selectedCoordinate}! 🎯`);
 
       // Check if ship is sunk
-      const ship = enemyShips.find(s => s.positions.some(p => p.row === row && p.col === col));
-  // Keep hit log updated when a shot is taken
-  useEffect(() => {
-    // No-op here; entries are added right in the shot handler
-  }, [turnCount]);
+      const ship = nextEnemyShips.find(s => s.positions.some(p => p.row === row && p.col === col));
+
       if (ship) {
         // Append hit log entry for ship hit
-        const shipIndex = enemyShips.indexOf(ship);
+        const shipIndex = nextEnemyShips.indexOf(ship);
         const size = ship.size;
         const willBeSunk = ship.positions.every(p => newEnemyGrid[p.row][p.col].isHit);
         setHitLog(prev => [...prev, { turn: turnCount + 1, coord: selectedCoordinate, shipId: shipIndex + 1, size, sunk: willBeSunk }]);
 
         if (willBeSunk) {
           ship.isSunk = true;
+
           ship.positions.forEach(p => {
             newEnemyGrid[p.row][p.col].state = 'sunk';
           });
@@ -272,13 +264,14 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
     }
 
     setEnemyGrid(newEnemyGrid);
+    setEnemyShips(nextEnemyShips);
     setSelectedCoordinate('');
 
     // increment counters
     setTurnCount(prev => prev + 1);
     setShotsTaken(prev => prev + 1);
 
-    const allSunk = enemyShips.every(ship => ship.isSunk);
+    const allSunk = nextEnemyShips.every(ship => ship.isSunk);
 
     if (gameMode === 'teamChallenge' && predictionLimit != null) {
       // Team challenge logic
@@ -298,8 +291,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
     // Professional Mode: prediction countdown and win check
     if (professionalMode) {
       const limit = typeof proPrediction === 'number' ? proPrediction : null;
-      const allSunkNow = enemyShips.every(s => s.isSunk);
-      if (allSunkNow) {
+      if (allSunk) {
         setGameMessage(`🏆 Victory! All ships sunk in ${turnCount + 1} turns${(limit?` (prediction: ${limit})`: '')}.`);
         setGamePhase('gameOver');
         return;
@@ -342,32 +334,29 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
     } else if (isPlayerGrid && cell.hasShip) {
       cellClass += 'bg-gray-600 text-white';
 
-    // Highlight current selected enemy coordinate
-    const coordStr = getCoordinateString(row, col);
-    const isTarget = !isPlayerGrid && selectedCoordinate && coordStr === selectedCoordinate.toUpperCase();
-    if (isTarget && cell.state === 'empty') {
-      cellClass += ' ring-2 ring-purple-500 bg-purple-50 ';
-    } else if (isTarget) {
-      cellClass += ' ring-2 ring-purple-500 ';
-    }
     } else {
       cellClass += 'bg-blue-100 hover:bg-blue-200';
+    }
+    if (!isPlayerGrid && selectedCoordinate.toUpperCase() === getCoordinateString(row, col)) {
+      cellClass += ' ring-2 ring-purple-500 ';
     }
 
     const coordinate = getCoordinateString(row, col);
 
     return (
-      <div
+      <button
         key={`${row}-${col}`}
-        className={cellClass}
+        type="button"
+        disabled={isPlayerGrid || cell.isHit || gamePhase !== 'playing'}
+        aria-label={`${coordinate}, ${cell.isHit ? cell.state === 'sunk' ? 'versenkt' : cell.hasShip ? 'Treffer' : 'Wasser' : 'unentdeckt'}`}
+        className={`battleship-cell ${cellClass}`}
         onClick={() => !isPlayerGrid && gamePhase === 'playing' && setSelectedCoordinate(coordinate)}
         title={coordinate}
       >
-        {cell.state === 'hit' && '💥'}
-        {cell.state === 'miss' && '💦'}
-        {cell.state === 'sunk' && '🚢'}
-        {isPlayerGrid && cell.hasShip && !cell.isHit && '🚢'}
-      </div>
+        <span key={cell.state} className={`battleship-symbol battleship-${cell.state}`} aria-hidden="true">
+          {cell.state === 'hit' ? '💥' : cell.state === 'miss' ? '💦' : cell.state === 'sunk' ? '🚢' : isPlayerGrid && cell.hasShip ? '🚢' : ''}
+        </span>
+      </button>
     );
   };
 
@@ -378,9 +367,10 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   }, [gameMode, gridSize, gamePhase]);
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="battleships-module max-w-6xl mx-auto p-2 sm:p-6">
+      <div className="game-toolbar">
         <h1 className="text-3xl font-bold text-blue-600">🚢 Battleships</h1>
+        <button className="bg-blue-100 rounded-lg px-4 py-2" onClick={initializeGame}>New round</button>
         <button
           onClick={onBack}
           className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
@@ -388,9 +378,9 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
           ← zurück
         </button>
             {/* Professional Mode Toggle */}
-            <div className="col-span-full flex items-center gap-3 mb-2">
-              <label className="font-bold text-gray-700">Professional Mode</label>
-              <input type="checkbox" checked={professionalMode} onChange={(e) => setProfessionalMode(e.target.checked)} />
+            <div className="advanced-toggle">
+              <label htmlFor="battleships-advanced" className="font-bold text-gray-700">Professional Mode</label>
+              <input id="battleships-advanced" type="checkbox" checked={professionalMode} onChange={(e) => setProfessionalMode(e.target.checked)} />
               {professionalMode && (
                 <span className="text-xs text-gray-500">Advanced configuration enabled</span>
               )}
@@ -577,7 +567,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                     <span className="text-2xl">👥</span>
                     <div>
                       <div className="font-bold text-purple-700">Two Players</div>
-                      <div className="text-sm text-purple-600">local multiplayer game</div>
+                      <div className="text-sm text-purple-600">spielt zu zweit an einem Gerät</div>
                     </div>
                   </div>
                 </button>
@@ -714,7 +704,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	                  );
 	                })}
 	              </div>
-	              <p className="text-xs text-gray-500 mt-2">Adjust the number per ship type. Placement is random.</p>
+	              <p className="text-xs text-gray-500 mt-2">Wählt die Anzahl je Schiffstyp. Die Schiffe werden zufällig platziert.</p>
 	            </div>
 
 
@@ -731,19 +721,19 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
           {/* Detailed German Instructions */}
           <div className="mt-8 space-y-6">
             <div className="bg-blue-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-blue-800 mb-4">📚 How to Read Coordinates</h3>
+              <h3 className="text-xl font-bold text-blue-800 mb-4">📚 So lest ihr Koordinaten</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-bold text-blue-700 mb-2">Coordinate Format:</h4>
+                  <h4 className="font-bold text-blue-700 mb-2">Aufbau einer Koordinate:</h4>
                   <ul className="text-blue-600 space-y-1">
-                    <li>• <strong>Letter + Number:</strong> A1, B3, C5, etc.</li>
-                    <li>• <strong>Rows:</strong> A, B, C, D... (top to bottom)</li>
-                    <li>• <strong>Columns:</strong> 1, 2, 3, 4... (left to right)</li>
-                    <li>• <strong>Example:</strong> A5 = Row A, Column 5</li>
+                    <li>• <strong>Buchstabe + Zahl:</strong> A1, B3, C5, etc.</li>
+                    <li>• <strong>Zeilen:</strong> A, B, C, D... (von oben nach unten)</li>
+                    <li>• <strong>Spalten:</strong> 1, 2, 3, 4... (von links nach rechts)</li>
+                    <li>• <strong>Beispiel:</strong> A5 = Zeile A, Spalte 5</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-blue-700 mb-2">English Pronunciation:</h4>
+                  <h4 className="font-bold text-blue-700 mb-2">Englische Aussprache:</h4>
                   <ul className="text-blue-600 space-y-1">
                     <li>• <strong>A1:</strong> "A one" [eɪ wʌn]</li>
                     <li>• <strong>B3:</strong> "B three" [biː θriː]</li>
@@ -758,8 +748,8 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
               <div className="bg-green-50 rounded-lg p-4">
                 <h4 className="font-bold text-green-800 mb-2">🎯 Practice Mode</h4>
                 <ul className="text-green-700 text-sm space-y-1">
-                  <li>• perfect for learning coordinates</li>
-                  <li>• ships are already placed</li>
+                  <li>• zum Üben der Koordinaten</li>
+                  <li>• die Schiffe sind bereits platziert</li>
 
 	            {gameMode === 'teamChallenge' && predictionLimit != null && (
 	              <div className="flex items-center justify-center gap-6 mb-4">
@@ -770,8 +760,8 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	              </div>
 	            )}
 
-                  <li>• focus on pronunciation</li>
-                  <li>• no time limit</li>
+                  <li>• achtet auf die englische Aussprache</li>
+                  <li>• ohne Zeitlimit</li>
                 </ul>
               </div>
 
@@ -788,29 +778,29 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 
                 <h4 className="font-bold text-orange-800 mb-2">🤖 vs Computer</h4>
                 <ul className="text-orange-700 text-sm space-y-1">
-                  <li>• play against the AI</li>
-                  <li>• computer shoots back</li>
-                  <li>• strategic thinking required</li>
-                  <li>• different difficulty levels</li>
+                  <li>• spielt gegen den Computer</li>
+                  <li>• der Computer schießt zurück</li>
+                  <li>• überlegt euch eure nächsten Züge</li>
+                  <li>• verschiedene Schwierigkeitsstufen</li>
                 </ul>
               </div>
 
               <div className="bg-purple-50 rounded-lg p-4">
                 <h4 className="font-bold text-purple-800 mb-2">👥 Two Players</h4>
                 <ul className="text-purple-700 text-sm space-y-1">
-                  <li>• local multiplayer game</li>
-                  <li>• turn the screen away between turns!</li>
-                  <li>• take turns placing ships</li>
-                  <li>• perfect for the classroom</li>
+                  <li>• spielt zu zweit an einem Gerät</li>
+                  <li>• dreht den Bildschirm zwischen den Zügen weg!</li>
+                  <li>• platziert eure Schiffe nacheinander</li>
+                  <li>• für gemeinsames Spielen im Unterricht</li>
                 </ul>
               </div>
             </div>
 
             <div className="bg-yellow-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-yellow-800 mb-4">💬 Useful English Phrases</h3>
+              <h3 className="text-xl font-bold text-yellow-800 mb-4">💬 Nützliche englische Sätze</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-bold text-yellow-700 mb-2">Calling Coordinates:</h4>
+                  <h4 className="font-bold text-yellow-700 mb-2">Koordinaten ansagen:</h4>
                   <ul className="text-yellow-600 space-y-1">
                     <li>• "I choose A5"</li>
                     <li>• "My target is B3"</li>
@@ -818,7 +808,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-yellow-700 mb-2">Reactions:</h4>
+                  <h4 className="font-bold text-yellow-700 mb-2">Reaktionen:</h4>
                   <ul className="text-yellow-600 space-y-1">
                     <li>• "Hit!"</li>
                     <li>• "Miss!"</li>
@@ -831,7 +821,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
         </div>
       )}
 
-      {gamePhase === 'playing' && (
+      {(gamePhase === 'playing' || gamePhase === 'gameOver') && (
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
@@ -860,18 +850,19 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
 	            )}
 
 
-            <div className="flex items-center space-x-4 mb-6">
+            <div className="coordinate-controls mb-6">
               <input
                 type="text"
                 value={selectedCoordinate}
                 onChange={(e) => setSelectedCoordinate(e.target.value.toUpperCase())}
                 placeholder="z.B. A5, B3, C7..."
+                disabled={gamePhase !== 'playing'}
                 className="px-3 py-2 border border-gray-300 rounded-lg text-lg font-mono"
                 onKeyPress={(e) => e.key === 'Enter' && handleCoordinateSubmit()}
               />
               <button
                 onClick={handleCoordinateSubmit}
-                disabled={!selectedCoordinate}
+                disabled={!selectedCoordinate || gamePhase !== 'playing'}
                 className="bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white font-bold py-2 px-6 rounded-lg transition-colors"
               >
                 🎯 Schießen!
@@ -907,7 +898,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-md p-4">
+            <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
               <h3 className="text-lg font-bold mb-3 text-center">Feindliches Gewässer</h3>
               <div className="flex justify-center">
                 <div className="inline-block">
@@ -939,7 +930,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
             </div>
 
             {gameMode !== 'practice' && (
-              <div className="bg-white rounded-lg shadow-md p-4">
+              <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
                 <h3 className="text-lg font-bold mb-3 text-center">Your Fleet</h3>
                 <div className="flex justify-center">
                   <div className="inline-block">

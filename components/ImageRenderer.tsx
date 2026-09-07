@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { resolveWordImage, isImageSource, fallbackWordEmoji } from '../utils/wordPictures';
 
 interface ImageRendererProps {
   image: string;
@@ -7,21 +8,28 @@ interface ImageRendererProps {
 }
 
 const ImageRenderer: React.FC<ImageRendererProps> = ({ image, alt, className }) => {
-  const isBase64 = image.startsWith('data:image');
+  const source = resolveWordImage(alt, image);
+  const [failedSource, setFailedSource] = useState<string | null>(null);
 
-  if (isBase64) {
-    return <img src={image} alt={alt} className={className} />;
+  if (isImageSource(source) && failedSource !== source) {
+    return <img src={source} alt={alt} width="100%" height="100%" className={`object-contain ${className ?? ''}`} decoding="async" onError={() => setFailedSource(source)} />;
   }
 
-  // Render emoji as a large, centered text character
+  // A shared square coordinate system makes emoji scale with their allotted slot.
+  // Fixed text-6xl overflowed small lists and undersized large flashcards.
   return (
-    <span 
-      className={`flex items-center justify-center text-6xl ${className}`} 
+    <svg
+      viewBox="0 0 100 100"
+      width="100%"
+      height="100%"
+      className={className}
       role="img" 
       aria-label={alt}
     >
-      {image}
-    </span>
+      <text x="50" y="54" textAnchor="middle" dominantBaseline="central" fontSize="80" fontFamily="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">
+        {fallbackWordEmoji(alt, image)}
+      </text>
+    </svg>
   );
 };
 

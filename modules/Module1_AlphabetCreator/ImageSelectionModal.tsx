@@ -24,7 +24,7 @@ const ImageSelectionModal: React.FC<ImageSelectionModalProps> = ({ isOpen, onClo
             <div className="w-32 h-32 bg-gray-100 rounded-md flex items-center justify-center p-2">
               <ImageRenderer image={word.image} alt={word.word} className="w-full h-full object-contain" />
             </div>
-            <span className="mt-2 font-bold text-lg text-slate-700 capitalize">{word.word}</span>
+            <span className="mt-2 font-bold text-lg text-slate-700 lowercase">{word.word.toLowerCase()}</span>
           </button>
         ))}
       </div>

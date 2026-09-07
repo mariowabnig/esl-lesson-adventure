@@ -26,10 +26,11 @@ export default function ModuleTreasureHunt() {
     moves: [],
     owners: {},
   });
+  const [reveal, setReveal] = useState<{ cells: number[]; kind: "hit" | "miss" | "collected"; turn: number } | null>(null);
   const visited = new Set(progress.moves.map((move) => move.cell));
   const [coordinate, setCoordinate] = useState("");
   const [message, setMessage] = useState(
-    "Choose a map, then start exploring together.",
+    "Wählt eine Karte und startet die Schatzsuche.",
   );
   const [ended, setEnded] = useState(false);
   const completedTreasures = round
@@ -68,6 +69,7 @@ export default function ModuleTreasureHunt() {
       setMessage((error as Error).message);
       return;
     }
+    setReveal(null);
     setProgress({ moves: [], owners: {} });
     setCoordinate("");
     setEnded(false);
@@ -96,6 +98,11 @@ export default function ModuleTreasureHunt() {
           : collected
             ? `Treasure collected at ${label}! All ${round.treasures[treasureIndex].length} squares uncovered. 🎉`
             : `Part of a treasure at ${label}! Find the rest in neighbouring squares. 💎`;
+      setReveal({
+        cells: collected ? round.treasures[treasureIndex] : [cell],
+        kind: treasureIndex < 0 ? "miss" : collected ? "collected" : "hit",
+        turn: next.moves.length,
+      });
       setProgress(next);
       setCoordinate("");
       setMessage(`${round.mode === "computer" ? `${who}: ` : ""}${feedback}`);
@@ -142,13 +149,12 @@ export default function ModuleTreasureHunt() {
       <header className="text-center">
         <h1 className="text-4xl text-emerald-700">💎 Treasure Hunt</h1>
         <p className="text-lg mt-2">
-          Choose your map. Find the treasures together or challenge the
-          computer!
+          Wählt eure Karte. Sucht gemeinsam nach Schätzen oder spielt gegen den Computer!
         </p>
       </header>
       <div className="treasure-controls bg-white rounded-xl p-5 shadow">
         <label>
-          Map size · total search area
+          Kartengröße · gesamte Suchfläche
           <select
             className="block border rounded p-2"
             value={size}
@@ -156,29 +162,29 @@ export default function ModuleTreasureHunt() {
           >
             {Array.from({ length: 13 }, (_, i) => i + 4).map((n) => (
               <option key={n} value={n}>
-                {n} × {n} · {n * n} squares
+                {n} × {n} · {n * n} Felder
               </option>
             ))}
           </select>
         </label>
         <label>
-          Play mode
+          Spielmodus
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value as "together" | "computer")}
           >
-            <option value="together">Explore together</option>
-            <option value="computer">Your team vs computer</option>
+            <option value="together">Gemeinsam suchen</option>
+            <option value="computer">Euer Team gegen den Computer</option>
           </select>
         </label>
         <fieldset className="treasure-counts col-span-full">
           <legend className="font-bold mb-2">
-            How many treasures of each size?
+            Wie viele Schätze je Größe?
           </legend>
           <div className="grid grid-cols-3 gap-3">
             {treasureCounts.map((count, index) => (
               <label key={index}>
-                {index + 2}-square treasures
+                Schätze mit {index + 2} Feldern
                 <select
                   value={count}
                   onChange={(e) =>
@@ -201,10 +207,8 @@ export default function ModuleTreasureHunt() {
         </fieldset>
         <p>
           {treasureSizes.length}{" "}
-          {treasureSizes.length === 1 ? "treasure" : "treasures"} ·{" "}
-          {treasureSizes.reduce((sum, n) => sum + n, 0)} treasure squares hidden
-          in a {size * size}-square area. Leave room between treasures. If they
-          do not fit, choose fewer treasures or a larger map.
+          {treasureSizes.length === 1 ? "Schatz" : "Schätze"} ·{" "}
+          {treasureSizes.reduce((sum, n) => sum + n, 0)} Schatzfelder auf insgesamt {size * size} Feldern. Zwischen den Schätzen bleibt Platz. Passen sie nicht auf die Karte, wählt weniger Schätze oder eine größere Karte.
         </p>
         <button
           onClick={start}
@@ -230,7 +234,7 @@ export default function ModuleTreasureHunt() {
         )}
         {round && (
           <p className="text-sm w-full">
-            Map, treasure and mode choices apply when you start a new round.
+            Änderungen an Karte, Schätzen und Spielmodus gelten ab der nächsten Runde.
           </p>
         )}
       </div>
@@ -249,10 +253,7 @@ export default function ModuleTreasureHunt() {
                 Your team: {teamScore} 🏆 · Computer: {computerScore} 🏆
               </p>
               <p>
-                Take turns on the same map. Whoever uncovers a treasure’s final
-                square collects it for one point, whatever its size. Most
-                treasures wins. Your team goes first; the computer uses only
-                revealed clues.
+                Ihr sucht abwechselnd auf derselben Karte. Wer das letzte Feld eines Schatzes aufdeckt, bekommt einen Punkt – unabhängig von seiner Größe. Wer die meisten Schätze sammelt, gewinnt. Euer Team beginnt. Der Computer kennt nur bereits aufgedeckte Felder.
               </p>
             </div>
           )}
@@ -310,14 +311,13 @@ export default function ModuleTreasureHunt() {
               >
                 Explore
               </button>
-              <p>Say the coordinate in English before exploring.</p>
+              <p>Sagt die Koordinate vor dem Aufdecken auf Englisch, zum Beispiel „B three“.</p>
             </form>
           )}
           <p className="text-lg">
-            Treasure sizes:{" "}
-            {round.treasures.map((t) => `${t.length} squares`).join(" · ")}.
-            Each treasure stretches straight across or down. Treasures never
-            touch, even at corners.
+            Schatzgrößen:{" "}
+            {round.treasures.map((t) => `${t.length} Felder`).join(" · ")}.
+            Jeder Schatz belegt mehrere Felder in einer geraden Reihe: waagrecht oder senkrecht. Schätze berühren sich nicht, auch nicht an den Ecken.
           </p>
           <div className="overflow-x-auto bg-white rounded-xl shadow p-4">
             <div
@@ -355,15 +355,15 @@ export default function ModuleTreasureHunt() {
                         aria-label={`${label}${seen ? (collected ? ", treasure collected" : treasure ? ", part of a treasure" : ", explored") : ""}`}
                         disabled={seen || ended || complete || computerTurn}
                         onClick={() => setCoordinate(label)}
-                        className={`aspect-square border-2 rounded-lg text-2xl ${collected ? "bg-amber-200 border-amber-600" : seen ? "bg-emerald-100 border-emerald-400" : selectedCell === cell ? "bg-amber-100 border-amber-500" : "bg-sky-50 border-sky-200 hover:bg-amber-50"}`}
+                        className={`treasure-cell aspect-square border-2 rounded-lg text-2xl ${collected ? "bg-amber-200 border-amber-600" : seen ? "bg-emerald-100 border-emerald-400" : selectedCell === cell ? "bg-amber-100 border-amber-500" : "bg-sky-50 border-sky-200 hover:bg-amber-50"}`}
                       >
-                        {seen
-                          ? collected
-                            ? "🌟"
-                            : treasure
-                              ? "💎"
-                              : "🌿"
-                          : "·"}
+                        <span
+                          key={reveal?.cells.includes(cell) ? `reveal-${reveal.turn}` : "still"}
+                          aria-hidden="true"
+                          className={`treasure-cell-icon ${reveal?.cells.includes(cell) ? `treasure-reveal-${reveal.kind}` : ""}`}
+                        >
+                          {seen ? collected ? "🌟" : treasure ? "💎" : "🌿" : "·"}
+                        </span>
                       </button>
                     );
                   })}
@@ -374,15 +374,10 @@ export default function ModuleTreasureHunt() {
         </>
       )}
       <aside className="rounded-xl bg-amber-50 p-4">
-        <strong>Say it together:</strong> “Let’s look at B3!” · “Part of a
+        <strong>Gemeinsam auf Englisch sprechen:</strong> “Let’s look at B3!” · “Part of a
         treasure!” · “Treasure collected!” · “Keep looking!” · “Your turn!”
         <p className="mt-2">
-          The treasures have different sizes: each one covers 2, 3 or 4 squares
-          in a straight line. After finding part of a treasure, explore above,
-          below, left or right to uncover the rest. Uncover every square of a
-          treasure to collect it. For a short game, choose fewer treasures or
-          finish after a few turns. For more practice, start another round and
-          let new explorers call the coordinates.
+          Ein Schatz besteht aus 2, 3 oder 4 zusammenhängenden Feldern. Ein Diamant 💎 bedeutet: Ihr habt einen Teil gefunden. Sucht oberhalb, unterhalb, links oder rechts weiter. Erst wenn alle Felder eines Schatzes aufgedeckt sind, ist er eingesammelt und wird mit Sternen 🌟 markiert. Ein Blatt 🌿 bedeutet: Hier liegt kein Schatz. Für eine kurze Runde wählt weniger Schätze oder beendet die Suche vorzeitig. Wechselt euch beim Ansagen der englischen Koordinaten ab.
         </p>
       </aside>
     </section>

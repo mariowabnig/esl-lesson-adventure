@@ -36,7 +36,7 @@ const MemoryCard: React.FC<{ card: GameCard; isFlipped: boolean; isMatched: bool
                     <ImageRenderer image={card.image} alt={card.word} className="max-w-full max-h-full object-contain" />
                 </div>
                 <div className="text-xs sm:text-sm font-bold text-gray-700 pb-2">
-                    {card.word}
+                    {card.word.toLowerCase()}
                 </div>
             </div>
         </div>
@@ -210,6 +210,7 @@ const Module2MemoryBomb: React.FC = () => {
     
     return (
         <ModuleContainer title="Memory">
+            <p className="mb-6 rounded-lg bg-blue-50 p-4 text-blue-900" lang="de">Deckt jeweils zwei Karten auf und findet passende Paare. Sprecht die englischen Wörter laut aus. Passende Karten bleiben aufgedeckt.</p>
             <div className="flex flex-col h-full">
                 <SettingsPanel
                     gridSize={gridSize} setGridSize={setGridSize}
