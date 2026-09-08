@@ -21,25 +21,28 @@ const MemoryCard: React.FC<{ card: GameCard; isFlipped: boolean; isMatched: bool
     const shouldShowFront = isFlipped || isMatched;
 
     return (
-        <div
-            className={`relative w-full aspect-square rounded-lg shadow-md cursor-pointer transition-transform duration-500 transform-style-3d ${shouldShowFront ? 'rotate-y-180' : ''} min-h-16 max-h-20`}
+        <button
+            type="button"
+            aria-label={shouldShowFront ? card.word.toLowerCase() : `Karte ${card.id + 1} aufdecken`}
+            disabled={shouldShowFront}
+            className={`memory-card relative w-full h-full rounded-lg shadow-md cursor-pointer transition-transform duration-500 transform-style-3d ${shouldShowFront ? 'rotate-y-180' : ''} min-h-0`}
             onClick={() => !(isFlipped || isMatched) && onCardClick(card)}
         >
             {/* Back of card (visible initially) */}
-            <div className="absolute inset-0 backface-hidden flex items-center justify-center rounded-lg bg-blue-400 hover:bg-blue-500 border-2 border-blue-600">
+            <div className="pointer-events-none absolute inset-0 backface-hidden flex items-center justify-center rounded-lg bg-blue-400 hover:bg-blue-500 border-2 border-blue-600">
                 <span className="text-2xl sm:text-3xl md:text-4xl font-display text-white">{card.id + 1}</span>
             </div>
 
             {/* Front of card (visible on flip/match) */}
-            <div className={`absolute inset-0 rotate-y-180 backface-hidden flex flex-col items-center justify-center rounded-lg border-2 ${isMatched ? 'bg-green-200 border-green-400' : 'bg-white border-gray-300'}`}>
-                <div className="flex-1 flex items-center justify-center p-2">
-                    <ImageRenderer image={card.image} alt={card.word} className="max-w-full max-h-full object-contain" />
+            <div className={`pointer-events-none overflow-hidden absolute inset-0 rotate-y-180 backface-hidden flex flex-col items-center justify-center rounded-lg border-2 ${isMatched ? 'bg-green-200 border-green-400' : 'bg-white border-gray-300'}`}>
+                <div className="min-h-0 min-w-0 w-full flex-1 flex items-center justify-center p-1">
+                    <ImageRenderer image={card.image} alt={card.word} className="w-full h-full object-contain" />
                 </div>
-                <div className="text-xs sm:text-sm font-bold text-gray-700 pb-2">
+                <div className="shrink-0 max-w-full px-1 pb-1 text-xs font-bold text-gray-700 break-words leading-tight">
                     {card.word.toLowerCase()}
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 

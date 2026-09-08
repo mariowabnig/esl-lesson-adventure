@@ -8,24 +8,27 @@ const FlippableCard: React.FC<{ word: SessionWord }> = ({ word }) => {
     const [isFlipped, setIsFlipped] = useState(false);
 
     return (
-        <div 
-            className="w-full h-48 perspective-1000"
+        <button
+            type="button"
+            aria-label={`${word.word.toLowerCase()} – Karte umdrehen`}
+            aria-pressed={isFlipped}
+            className="w-full min-w-0 h-48 perspective-1000"
             onClick={() => setIsFlipped(!isFlipped)}
         >
             <div 
                 className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}
             >
                 {/* Front of card (Image) */}
-                <div className="absolute w-full h-full backface-hidden flex items-center justify-center rounded-xl bg-white shadow-lg cursor-pointer">
+                <div className="pointer-events-none overflow-hidden p-3 absolute w-full h-full backface-hidden flex items-center justify-center rounded-xl bg-white shadow-lg cursor-pointer">
                     <ImageRenderer image={word.image} alt={word.word} className="w-32 h-32 object-contain" />
                 </div>
 
                 {/* Back of card (Word) */}
-                <div className="absolute w-full h-full rotate-y-180 backface-hidden flex items-center justify-center rounded-xl bg-sky-200 shadow-lg cursor-pointer">
-                    <span className="text-3xl font-bold text-sky-800 lowercase">{word.word.toLowerCase()}</span>
+                <div className="pointer-events-none overflow-hidden p-3 absolute w-full h-full rotate-y-180 backface-hidden flex items-center justify-center rounded-xl bg-sky-200 shadow-lg cursor-pointer">
+                    <span className="max-w-full break-words text-2xl font-bold text-sky-800 lowercase">{word.word.toLowerCase()}</span>
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 

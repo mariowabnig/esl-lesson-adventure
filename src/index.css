@@ -189,3 +189,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 @keyframes battleship-splash { 0% { transform: scale(.2); opacity: .3; } 45% { transform: scale(1.4) translateY(-3px); } 100% { transform: scale(1); opacity: 1; } }
 @keyframes battleship-sink { 0% { transform: translateY(-7px) rotate(-15deg); } 50% { transform: translateY(5px) rotate(12deg); opacity: .4; } 100% { transform: translateY(0) rotate(0); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .battleship-symbol { animation: none; } }
+
+/* Media must fit its card slot and never intercept card clicks or start dragging. */
+.word-image { display: block; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; pointer-events: none; user-select: none; }
+.word-image-text { display: flex; align-items: center; justify-content: center; text-align: center; overflow-wrap: anywhere; overflow: hidden; font-size: clamp(11px, 1.4vw, 20px); font-weight: 800; line-height: 1.15; }
+.memory-card { min-width: 0; }

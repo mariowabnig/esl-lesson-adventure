@@ -25,7 +25,14 @@ describe('prepared classroom pictures', () => {
     expect(resolveWordImage('cat', '🐈')).toBe('/word-pictures/cat.jpg');
     expect(resolveWordImage('hamster', '📝')).toBe('/word-pictures/hamster.jpg');
     expect(resolveWordImage('cat', 'data:image/png;base64,abc')).toBe('data:image/png;base64,abc');
-    expect(resolveWordImage('unlisted word', '📝')).toBe('📝');
+    expect(resolveWordImage('unlisted word', '📝')).toBe('unlisted word');
+  });
+  it('shows custom words without pictures in cards and printable bingo', () => {
+    const word = { word: 'my custom word', image: '📝', letter: 'M', category: 'other' as const };
+    const markup = renderToStaticMarkup(createElement(ImageRenderer, { image: word.image, alt: word.word }));
+    expect(markup).toContain('my custom word</span>');
+    expect(markup).not.toContain('📝');
+    expect(bingoImageHtml(word)).toBe('my custom word');
   });
   it('renders actual pictures in app cards and printable bingo', () => {
     const word = { word: 'hamster', image: '📝', letter: 'H', category: 'animals' as const };

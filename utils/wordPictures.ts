@@ -29,7 +29,10 @@ export function isImageSource(image: string): boolean {
 // Preserve a deliberately supplied image instead of replacing it with a library item.
 export function resolveWordImage(word: string, image: string): string {
   if (isImageSource(image)) return image;
-  return getWordPicture(word) ?? fallbackWordEmoji(word, image);
+  const picture = getWordPicture(word);
+  if (picture) return picture;
+  const emoji = fallbackWordEmoji(word, image);
+  return emoji === '📝' ? word.toLowerCase() : emoji;
 }
 
 export function fallbackWordEmoji(word: string, image: string): string {

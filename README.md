@@ -97,3 +97,9 @@ Word Selection shows a short German-spelling pronunciation aid under each A–Z
 button (e.g. C = sie, P = pie), without IPA. A colon marks a long sound. Z follows
 the app's American English voice (sie); the explanatory note also gives British
 sed. These letter-name hints are separate from editable vocabulary notes.
+
+Custom words without a prepared picture or matching emoji display the word itself
+instead of a placeholder, including printable Bingo. Card media stays inside its
+allocated slot and does not intercept clicks or start image dragging. Memory and
+Word Review use keyboard-accessible buttons; Memory reserves space for its label
+so pictures cannot expand across adjacent cards.
