@@ -194,3 +194,28 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .word-image { display: block; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; pointer-events: none; user-select: none; }
 .word-image-text { display: flex; align-items: center; justify-content: center; text-align: center; overflow-wrap: anywhere; overflow: hidden; font-size: clamp(11px, 1.4vw, 20px); font-weight: 800; line-height: 1.15; }
 .memory-card { min-width: 0; }
+
+/* Compact coordinate games: board fits the viewport instead of creating a long page. */
+.hunt-setup, .hunt-help { background: white; border: 1px solid #cbd5e1; border-radius: 12px; }
+.hunt-setup summary, .hunt-help summary { padding: 12px 16px; font-weight: 800; cursor: pointer; }
+.hunt-play-area { scroll-margin-top: 64px; display: flex; flex-direction: column; gap: 8px; }
+.hunt-round-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.hunt-round-actions button { background: white; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 800; }
+.hunt-play-area .hunt-message, .hunt-play-area > p, .hunt-score { padding: 6px 10px; margin: 0; font-size: 14px; }
+.hunt-score p { font-size: 15px; }
+.hunt-score p + p { display: none; }
+.hunt-play-area > p.text-lg { display: none; }
+.hunt-play-area .coordinate-controls { gap: 8px; align-items: center; }
+.hunt-play-area .coordinate-controls label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.hunt-play-area .coordinate-controls input { max-width: 110px; min-height: 38px; padding: 5px 10px; }
+.hunt-play-area .coordinate-controls > button { min-height: 38px; padding: 6px 16px; }
+.hunt-play-area .coordinate-controls > p { flex-basis: auto; font-size: 12px; margin: 0; }
+.hunt-play-area .flex.flex-wrap { font-size: 14px; gap: 12px; }
+.hunt-board { gap: 2px; }
+.hunt-board .treasure-cell { border-radius: 5px; border-width: 1px; font-size: clamp(10px, 2.3vh, 23px); min-width: 0; min-height: 0; padding: 0; }
+.hunt-board .hunt-hidden { background: #f8fafc; border-color: #94a3b8; color: #475569; }
+.hunt-board .hunt-hit { background: #fed7aa; border-color: #ea580c; color: #7c2d12; }
+.hunt-board .hunt-miss { background: #bfdbfe; border-color: #3b82f6; color: #1e3a8a; }
+.hunt-board .hunt-sunk { background: #bbf7d0; border-color: #16a34a; color: #14532d; }
+.hunt-board .treasure-cell:focus-visible { outline-offset: 0; }
+.hunt-legend { font-size: 12px !important; text-align: center; }

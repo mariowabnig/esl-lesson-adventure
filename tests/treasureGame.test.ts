@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  remainingLives,
   chooseComputerSquare,
   uncoverTreasure,
   type TreasureProgress,
@@ -112,5 +113,15 @@ describe("computer search", () => {
         [],
       ),
     ).toBeNull();
+  });
+});
+
+describe('lives', () => {
+  it('charges only the side that missed, never hits; supports unlimited lives', () => {
+    const moves = [ {cell: 0, hit: false, explorer: 'team' as const}, {cell: 1, hit: true, explorer: 'computer' as const} ];
+    expect(remainingLives(moves, 'team', 1)).toBe(0);
+    expect(remainingLives(moves, 'computer', 1)).toBe(1);
+    expect(remainingLives(moves, 'team', 0)).toBe(Infinity);
+    expect(remainingLives([...moves,...moves], 'team', 1)).toBe(0);
   });
 });

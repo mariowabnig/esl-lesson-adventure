@@ -103,3 +103,26 @@ instead of a placeholder, including printable Bingo. Card media stays inside its
 allocated slot and does not intercept clicks or start image dragging. Memory and
 Word Review use keyboard-accessible buttons; Memory reserves space for its label
 so pictures cannot expand across adjacent cards.
+
+Battleships now opens **Flottenjagd**, with Treasure Hunt feature parity: 4–16
+square sides, 0–6 ships of each length (2/3/4), separated random placement,
+cooperative or alternating team/computer play on a shared fleet, last-hit points,
+score comparison including draws, early finish, per-round settings snapshots,
+coordinate selection/input, progress counters and hit/miss/sunk animations.
+Computer moves use only public hits/misses and are cancelled on finish, restart
+or leaving the view. The former Battleships modes remain under **Bisherige
+Spielmodi**; changing versions starts fresh.
+
+Both Treasure Hunt and Flottenjagd support 3/5/10/15/20 lives per side (default 5),
+or unlimited. A miss costs one life; hits do not. In cooperative play zero lives
+ends the round; against the computer the first side at zero loses. Otherwise
+completed-board and early-finish results use collected-object scores. Life limits
+are frozen at round start. Pending computer moves cancel when a round ends.
+The previous Battleships computer button now routes to the functioning shared-fleet
+computer game rather than the unfinished legacy placement flow.
+
+Treasure Hunt and Flottenjagd use compact play views. Setup collapses when a round
+starts, rules are expandable, and the full grid scales to the viewport height.
+Round controls remain available above the board. Cells use white for unvisited,
+orange for partial hits, blue for misses and green for completed objects, with
+symbols and accessible state labels alongside a visible color legend.

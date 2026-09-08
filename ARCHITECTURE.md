@@ -172,3 +172,8 @@ Module0_WordSelection
 - Battleships updates a copied fleet when sinking ships. State-keyed icon spans
   animate hit/miss/sunk transitions once; the final grid stays mounted at game over.
 - New CSS effects use finite animation durations and honour reduced motion.
+
+- `Module4_Battleships/FleetHunt.tsx` provides the default Treasure Hunt-style
+  fleet game, reusing `createSizedTreasures`, `chooseComputerSquare` and
+  `uncoverTreasure` for identical placement, fair targeting and point ownership.
+  The Battleships entry point retains the previous module behind a version switch.

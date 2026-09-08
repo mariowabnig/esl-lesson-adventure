@@ -65,3 +65,8 @@ export function uncoverTreasure(
   }
   return { moves, owners };
 }
+
+/** Only misses cost lives. Zero means unlimited. */
+export function remainingLives(moves: TreasureMove[], explorer: Explorer, limit: number): number {
+  return limit === 0 ? Infinity : Math.max(0, limit - moves.filter(move => move.explorer === explorer && !move.hit).length);
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { parseGridCoordinate } from '../../utils/coordinates';
 import { SessionWord } from '../../types';
+import FleetHunt from './FleetHunt';
 
 type GameMode = 'practice' | 'vsComputer' | 'twoPlayer' | 'teamChallenge';
 type CellState = 'empty' | 'ship' | 'hit' | 'miss' | 'sunk';
@@ -24,6 +25,7 @@ interface Ship {
 interface BattleshipsProps {
   sessionVocabulary: SessionWord[];
   onBack: () => void;
+  onComputer?: () => void;
 }
 
 const GRID_SIZES = [
@@ -38,7 +40,7 @@ const SHIP_CONFIGS = {
   20: [{ size: 2, count: 6 }, { size: 3, count: 5 }, { size: 4, count: 4 }, { size: 5, count: 3 }]
 };
 
-const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, onBack }) => {
+const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, onBack, onComputer }) => {
   const [gameMode, setGameMode] = useState<GameMode>('practice');
   const [gridSize, setGridSize] = useState(12);
   const [gamePhase, setGamePhase] = useState<GamePhase>('setup');
@@ -431,7 +433,7 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
                 </button>
 
                 <button
-                  onClick={() => setGameMode('vsComputer')}
+                  onClick={() => onComputer?.()}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
                     gameMode === 'vsComputer'
                       ? 'border-orange-500 bg-orange-50 shadow-md'
@@ -997,4 +999,15 @@ const Module4_Battleships: React.FC<BattleshipsProps> = ({ sessionVocabulary, on
   );
 };
 
-export default Module4_Battleships;
+export default function Battleships(props: BattleshipsProps) {
+  const [classic, setClassic] = useState(false);
+  const [computer, setComputer] = useState(false);
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Battleships-Version">
+      <button className="rounded-lg border bg-white px-4 py-3 font-bold" aria-pressed={!classic} onClick={() => setClassic(false)}>Flottenjagd · wie die Schatzsuche</button>
+      <button className="rounded-lg border bg-white px-4 py-3" aria-pressed={classic} onClick={() => setClassic(true)}>Bisherige Spielmodi</button>
+    </div>
+    <p className="mb-4 text-sm text-slate-600">Ein Versionswechsel beendet die laufende Runde. Die bisherigen Einstellungen und Spielmodi findet ihr unter „Bisherige Spielmodi“.</p>
+    {classic ? <Module4_Battleships {...props} onComputer={() => { setComputer(true); setClassic(false); }}/> : <FleetHunt initialMode={computer ? "computer" : "together"}/>}
+  </>;
+}

@@ -11,7 +11,7 @@ import {
   type TreasureProgress,
 } from "../../utils/treasureGame";
 
-export default function ModuleTreasureHunt() {
+export default function FleetHunt({ initialMode = "together" }: { initialMode?: "together" | "computer" }) {
   const boardRef = useRef<HTMLDivElement>(null);
   const [setupOpen, setSetupOpen] = useState(true);
   const [lives, setLives] = useState(5);
@@ -20,7 +20,7 @@ export default function ModuleTreasureHunt() {
   const treasureSizes = treasureCounts.flatMap((count, index) =>
     Array(count).fill(index + 2),
   );
-  const [mode, setMode] = useState<"together" | "computer">("together");
+  const [mode, setMode] = useState<"together" | "computer">(initialMode);
   const [round, setRound] = useState<{
     lives: number;
     size: number;
@@ -35,7 +35,7 @@ export default function ModuleTreasureHunt() {
   const visited = new Set(progress.moves.map((move) => move.cell));
   const [coordinate, setCoordinate] = useState("");
   const [message, setMessage] = useState(
-    "Wählt eine Karte und startet die Schatzsuche.",
+    "Wählt ein Spielfeld und startet Schiffe versenken.",
   );
   const [ended, setEnded] = useState(false);
   const completedTreasures = round
@@ -63,10 +63,10 @@ export default function ModuleTreasureHunt() {
   const result = exhausted
     ? teamLives === 0 ? "Keine Leben mehr – der Computer gewinnt." : "Der Computer hat keine Leben mehr – euer Team gewinnt! 🎉"
     : teamScore === computerScore
-      ? "It’s a draw!"
+      ? "Unentschieden!"
       : teamScore > computerScore
-        ? "Your team wins! 🎉"
-        : "The computer wins. Try another round!";
+        ? "Euer Team gewinnt! 🎉"
+        : "Der Computer gewinnt. Versucht es noch einmal!";
   const start = () => {
     try {
       setRound({
@@ -76,7 +76,7 @@ export default function ModuleTreasureHunt() {
         mode,
       });
     } catch (error) {
-      setMessage((error as Error).message);
+      setMessage("Die Flotte passt nicht mit Abstand auf dieses Spielfeld. Wählt weniger Schiffe oder ein größeres Feld.");
       return;
     }
     setSetupOpen(false);
@@ -84,7 +84,7 @@ export default function ModuleTreasureHunt() {
     setProgress({ moves: [], owners: {} });
     setCoordinate("");
     setEnded(false);
-    setMessage("Where shall we look? Say a letter and a number: “B three!”");
+    setMessage("Sagt eine Koordinate auf Englisch, zum Beispiel „B three“, und schießt!");
   };
   const makeMove = useCallback(
     (cell: number, explorer: Explorer) => {
@@ -102,13 +102,13 @@ export default function ModuleTreasureHunt() {
       );
       const collected =
         treasureIndex >= 0 && next.owners[treasureIndex] !== undefined;
-      const who = explorer === "team" ? "Your team" : "Computer";
+      const who = explorer === "team" ? "Euer Team" : "Computer";
       const feedback =
         treasureIndex < 0
-          ? `No treasure at ${label}. 🌿`
+          ? `Wasser bei ${label}! 💦`
           : collected
-            ? `Treasure collected at ${label}! All ${round.treasures[treasureIndex].length} squares uncovered. 🎉`
-            : `Part of a treasure at ${label}! Find the rest in neighbouring squares. 💎`;
+            ? `Schiff bei ${label} versenkt! Alle ${round.treasures[treasureIndex].length} Felder getroffen. 🚢`
+            : `Treffer bei ${label}! Sucht in den Nachbarfeldern weiter. 💥`;
       setReveal({
         cells: collected ? round.treasures[treasureIndex] : [cell],
         kind: treasureIndex < 0 ? "miss" : collected ? "collected" : "hit",
@@ -148,13 +148,13 @@ export default function ModuleTreasureHunt() {
     const parsed = parseGridCoordinate(coordinate, round.size);
     if (!parsed) {
       setMessage(
-        `Try a coordinate from A1 to ${String.fromCharCode(64 + round.size)}${round.size}, for example B3.`,
+        `Gebt eine Koordinate von A1 bis ${String.fromCharCode(64 + round.size)}${round.size} ein, zum Beispiel B3.`,
       );
       return;
     }
     const cell = parsed.row * round.size + parsed.col;
     if (visited.has(cell)) {
-      setMessage("We have already looked there. Choose another square!");
+      setMessage("Dieses Feld wurde bereits beschossen. Wählt ein anderes!");
       return;
     }
     makeMove(cell, "team");
@@ -162,16 +162,16 @@ export default function ModuleTreasureHunt() {
   return (
     <section className="treasure-module max-w-5xl mx-auto p-2 sm:p-6 space-y-5">
       <header className="text-center">
-        <h1 className="text-4xl text-emerald-700">💎 Treasure Hunt</h1>
+        <h1 className="text-4xl text-emerald-700">🚢 Schiffe versenken</h1>
         <p className="text-lg mt-2">
-          Wählt eure Karte. Sucht gemeinsam nach Schätzen oder spielt gegen den Computer!
+          Versenkt gemeinsam die Flotte oder spielt als Team gegen den Computer!
         </p>
       </header>
       <details className="hunt-setup" open={setupOpen} onToggle={e => setSetupOpen(e.currentTarget.open)}>
         <summary>Einstellungen · Feldgröße, Spielmodus und Leben</summary>
       <div className="treasure-controls bg-white rounded-xl p-5 shadow">
         <label>
-          Kartengröße · gesamte Suchfläche
+          Spielfeldgröße · gesamte Fläche
           <select
             className="block border rounded p-2"
             value={size}
@@ -190,7 +190,7 @@ export default function ModuleTreasureHunt() {
             value={mode}
             onChange={(e) => setMode(e.target.value as "together" | "computer")}
           >
-            <option value="together">Gemeinsam suchen</option>
+            <option value="together">Gemeinsam Schiffe versenken</option>
             <option value="computer">Euer Team gegen den Computer</option>
           </select>
         </label>
@@ -202,12 +202,12 @@ export default function ModuleTreasureHunt() {
         <p>Ein Fehlschuss kostet ein Leben. Treffer kosten nichts. Im Computermodus hat jede Seite eigene Leben; wer keine mehr hat, verliert. Einstellungen gelten ab der nächsten Runde.</p>
         <fieldset className="treasure-counts col-span-full">
           <legend className="font-bold mb-2">
-            Wie viele Schätze je Größe?
+            Wie viele Schiffe je Größe?
           </legend>
           <div className="grid grid-cols-3 gap-3">
             {treasureCounts.map((count, index) => (
               <label key={index}>
-                Schätze mit {index + 2} Feldern
+                Schiffe mit {index + 2} Feldern
                 <select
                   value={count}
                   onChange={(e) =>
@@ -230,15 +230,15 @@ export default function ModuleTreasureHunt() {
         </fieldset>
         <p>
           {treasureSizes.length}{" "}
-          {treasureSizes.length === 1 ? "Schatz" : "Schätze"} ·{" "}
-          {treasureSizes.reduce((sum, n) => sum + n, 0)} Schatzfelder auf insgesamt {size * size} Feldern. Zwischen den Schätzen bleibt Platz. Passen sie nicht auf die Karte, wählt weniger Schätze oder eine größere Karte.
+          {treasureSizes.length === 1 ? "Schiff" : "Schiffe"} ·{" "}
+          {treasureSizes.reduce((sum, n) => sum + n, 0)} Schiffsfelder auf insgesamt {size * size} Feldern. Zwischen den Schiffen bleibt Platz. Passen sie nicht auf das Feld, wählt weniger Schiffe oder ein größeres Spielfeld.
         </p>
         <button
           onClick={start}
           disabled={!treasureSizes.length}
           className="disabled:opacity-50 bg-emerald-700 text-white font-bold rounded-lg px-5 py-3"
         >
-          {round ? "New round" : "Start exploring"}
+          {round ? "Neue Runde" : "Runde starten"}
         </button>
         {round && !ended && !complete && (
           <button
@@ -246,18 +246,18 @@ export default function ModuleTreasureHunt() {
               setEnded(true);
               setMessage(
                 round.mode === "computer"
-                  ? "Round finished! Let’s compare the scores."
-                  : "Exploring finished! Look at the treasures you found together.",
+                  ? "Runde beendet! Vergleicht die Punkte."
+                  : "Runde beendet! Schaut euch eure versenkten Schiffe an.",
               );
             }}
             className="border rounded-lg px-5 py-3"
           >
-            Finish round
+            Runde beenden
           </button>
         )}
         {round && (
           <p className="text-sm w-full">
-            Änderungen an Karte, Schätzen und Spielmodus gelten ab der nächsten Runde.
+            Änderungen an Spielfeld, Flotte und Spielmodus gelten ab der nächsten Runde.
           </p>
         )}
       </div>
@@ -280,10 +280,10 @@ export default function ModuleTreasureHunt() {
           {round.mode === "computer" && (
             <div className="hunt-score rounded-xl bg-violet-50 p-4 space-y-2">
               <p className="text-xl font-bold">
-                Your team: {teamScore} 🏆 · Computer: {computerScore} 🏆
+                Euer Team: {teamScore} 🏆 · Computer: {computerScore} 🏆
               </p>
               <p>
-                Ihr sucht abwechselnd auf derselben Karte. Wer das letzte Feld eines Schatzes aufdeckt, bekommt einen Punkt – unabhängig von seiner Größe. Wer die meisten Schätze sammelt, gewinnt. Euer Team beginnt. Der Computer kennt nur bereits aufgedeckte Felder.
+                Ihr schießt abwechselnd auf dieselbe Flotte. Wer das letzte Feld eines Schiffs trifft, bekommt einen Punkt – unabhängig von seiner Größe. Wer die meisten Schiffe versenkt, gewinnt. Euer Team beginnt. Der Computer kennt nur bereits beschossene Felder.
               </p>
             </div>
           )}
@@ -297,25 +297,25 @@ export default function ModuleTreasureHunt() {
                 : exhausted
                   ? "Keine Leben mehr. Runde beendet – versucht es noch einmal!"
                 : complete
-                  ? "Wonderful teamwork! You collected every treasure! 🎉"
-                  : "Round finished. Well explored, everyone!"}
+                  ? "Super Teamarbeit! Alle Schiffe sind versenkt! 🎉"
+                  : "Runde beendet. Gut gespielt!"}
             </p>
           ) : (
             <p className="font-bold" role="status">
               {computerTurn
-                ? "🤖 Computer is choosing a square…"
+                ? "🤖 Der Computer wählt ein Feld …"
                 : round.mode === "computer"
-                  ? "Your team’s turn!"
-                  : "Let’s explore together!"}
+                  ? "Euer Team ist dran!"
+                  : "Versenkt die Flotte gemeinsam!"}
             </p>
           )}
           <div className="flex flex-wrap gap-3 text-lg font-bold">
             <span>
-              💎 {found} / {round.treasures.length}{" "}
-              {round.treasures.length === 1 ? "treasure" : "treasures"}{" "}
-              collected · {pieces} treasure squares uncovered
+              🚢 {found} / {round.treasures.length}{" "}
+              {round.treasures.length === 1 ? "Schiff" : "Schiffe"}{" "}
+              versenkt · {pieces} Treffer
             </span>
-            <span>{visited.size} places explored</span>
+            <span>{visited.size} Schüsse · {visited.size - pieces} Fehlschüsse</span>
           </div>
           {!ended && !complete && (
             <form
@@ -326,9 +326,9 @@ export default function ModuleTreasureHunt() {
               }}
             >
               <label className="font-bold">
-                Let’s look at…
+                Zielkoordinate
                 <input
-                  aria-label="Coordinate"
+                  aria-label="Koordinate"
                   disabled={computerTurn}
                   className="block border-2 rounded-lg p-3 text-xl uppercase"
                   placeholder="B3"
@@ -341,15 +341,15 @@ export default function ModuleTreasureHunt() {
                 className="bg-emerald-700 text-white rounded-lg px-6 py-3 text-xl"
                 disabled={!coordinate.trim() || computerTurn}
               >
-                Explore
+                Schießen
               </button>
               <p>Sagt die Koordinate vor dem Aufdecken auf Englisch, zum Beispiel „B three“.</p>
             </form>
           )}
           <p className="text-lg">
-            Schatzgrößen:{" "}
+            Schiffsgrößen:{" "}
             {round.treasures.map((t) => `${t.length} Felder`).join(" · ")}.
-            Jeder Schatz belegt mehrere Felder in einer geraden Reihe: waagrecht oder senkrecht. Schätze berühren sich nicht, auch nicht an den Ecken.
+            Jedes Schiff liegt waagrecht oder senkrecht. Schiffe berühren sich nicht, auch nicht an den Ecken.
           </p>
           <div className="hunt-board-wrap bg-white rounded-xl shadow p-2">
             <div
@@ -384,7 +384,7 @@ export default function ModuleTreasureHunt() {
                     return (
                       <button
                         key={c}
-                        aria-label={`${label}${seen ? (collected ? ", treasure collected" : treasure ? ", part of a treasure" : ", explored") : ""}`}
+                        aria-label={`${label}${seen ? (collected ? ", versenkt" : treasure ? ", Treffer" : ", Wasser") : ""}`}
                         disabled={seen || ended || complete || computerTurn}
                         onClick={() => setCoordinate(label)}
                         className={`treasure-cell ${seen ? collected ? "hunt-sunk" : treasure ? "hunt-hit" : "hunt-miss" : "hunt-hidden"} aspect-square border-2 rounded-lg text-2xl ${collected ? "bg-amber-200 border-amber-600" : seen ? "bg-emerald-100 border-emerald-400" : selectedCell === cell ? "bg-amber-100 border-amber-500" : "bg-sky-50 border-sky-200 hover:bg-amber-50"}`}
@@ -392,9 +392,9 @@ export default function ModuleTreasureHunt() {
                         <span
                           key={reveal?.cells.includes(cell) ? `reveal-${reveal.turn}` : "still"}
                           aria-hidden="true"
-                          className={`treasure-cell-icon ${reveal?.cells.includes(cell) ? `treasure-reveal-${reveal.kind}` : ""}`}
+                          className={`battleship-symbol ${reveal?.cells.includes(cell) ? `battleship-${reveal.kind === "collected" ? "sunk" : reveal.kind}` : ""}`}
                         >
-                          {seen ? collected ? "🌟" : treasure ? "💎" : "🌿" : "·"}
+                          {seen ? collected ? "🚢" : treasure ? "💥" : "💦" : "·"}
                         </span>
                       </button>
                     );
@@ -409,10 +409,9 @@ export default function ModuleTreasureHunt() {
       </div>
       <details className="hunt-help"><summary>Spielregeln und englische Sprechbeispiele</summary>
       <aside className="rounded-xl bg-amber-50 p-4">
-        <strong>Gemeinsam auf Englisch sprechen:</strong> “Let’s look at B3!” · “Part of a
-        treasure!” · “Treasure collected!” · “Keep looking!” · “Your turn!”
+        <strong>Gemeinsam auf Englisch sprechen:</strong> “I choose B3!” · “Hit!” · “Miss!” · “Ship sunk!” · “Your turn!”
         <p className="mt-2">
-          Ein Schatz besteht aus 2, 3 oder 4 zusammenhängenden Feldern. Ein Diamant 💎 bedeutet: Ihr habt einen Teil gefunden. Sucht oberhalb, unterhalb, links oder rechts weiter. Erst wenn alle Felder eines Schatzes aufgedeckt sind, ist er eingesammelt und wird mit Sternen 🌟 markiert. Ein Blatt 🌿 bedeutet: Hier liegt kein Schatz. Für eine kurze Runde wählt weniger Schätze oder beendet die Suche vorzeitig. Wechselt euch beim Ansagen der englischen Koordinaten ab.
+          Ein Schiff belegt 2, 3 oder 4 Felder. 💥 bedeutet Treffer, 💦 bedeutet Wasser. Sucht nach einem Treffer oberhalb, unterhalb, links oder rechts weiter. Erst wenn alle Felder getroffen sind, ist das Schiff versenkt 🚢. Für kurze Runden wählt weniger Schiffe oder beendet die Runde vorzeitig. Wechselt euch beim Ansagen der englischen Koordinaten ab.
         </p>
       </aside>
       </details>
