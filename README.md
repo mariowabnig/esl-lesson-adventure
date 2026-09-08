@@ -28,12 +28,14 @@ uncovers part of a treasure; uncover all its squares to collect it. Choose
 maps from 4 × 4 to 16 × 16 and independently select 0–6 treasures of each size
 (2, 3 or 4 squares). At least one treasure is required; crowded layouts show a
 message asking for fewer treasures or a larger map. **Finish round** lets the teacher stop at any time; **New round** resets.
-**Your team vs computer** uses the same map with alternating turns. The team goes
-first. Whoever uncovers a treasure’s final square gets one point, regardless of
-its size. The computer follows revealed hits and otherwise chooses an unexplored
-square; it cannot inspect hidden positions. Most collected treasures wins; equal
-scores are a draw, including when the teacher finishes early. Setup changes apply
-to the next round.
+**Your team vs computer** uses two separate fields. Place your own treasures or
+ships first, with rotation, a placement preview, undo and reset. All objects must
+fit and stay separated, including diagonally. The computer receives its own hidden
+layout with identical object sizes. Your team starts and turns alternate. Each side
+searches only the opponent’s field; the computer targets using its own public
+hits/misses only. Find all opposing objects or exhaust the opponent’s lives to win.
+Early finish compares fully found objects, with equal scores a draw. Both layouts
+are revealed after the round. Setup changes require a new round.
 
 Vocabulary/settings are saved in the current browser, not shared with other visitors.
 
@@ -106,23 +108,29 @@ so pictures cannot expand across adjacent cards.
 
 Battleships now opens **Flottenjagd**, with Treasure Hunt feature parity: 4–16
 square sides, 0–6 ships of each length (2/3/4), separated random placement,
-cooperative or alternating team/computer play on a shared fleet, last-hit points,
+cooperative play or separate-field team/computer play with manual placement,
 score comparison including draws, early finish, per-round settings snapshots,
 coordinate selection/input, progress counters and hit/miss/sunk animations.
 Computer moves use only public hits/misses and are cancelled on finish, restart
 or leaving the view. The former Battleships modes remain under **Bisherige
 Spielmodi**; changing versions starts fresh.
 
-Both Treasure Hunt and Flottenjagd support 3/5/10/15/20 lives per side (default 5),
-or unlimited. A miss costs one life; hits do not. In cooperative play zero lives
-ends the round; against the computer the first side at zero loses. Otherwise
-completed-board and early-finish results use collected-object scores. Life limits
-are frozen at round start. Pending computer moves cancel when a round ends.
-The previous Battleships computer button now routes to the functioning shared-fleet
-computer game rather than the unfinished legacy placement flow.
+Both Treasure Hunt and Flottenjagd accept an exact non-negative whole number of
+lives per side (default 5); 0 means unlimited. Misses cost one life; hits cost none.
+The setting applies equally to both sides and is frozen for the round. Invalid
+values are rejected before starting. Pending computer turns cancel on round end,
+restart, settings or leaving the game. The legacy Battleships computer button
+routes to the new separate-field game.
 
 Treasure Hunt and Flottenjagd use compact play views. Setup collapses when a round
 starts, rules are expandable, and the full grid scales to the viewport height.
 Round controls remain available above the board. Cells use white for unvisited,
 orange for partial hits, blue for misses and green for completed objects, with
 symbols and accessible state labels alongside a visible color legend.
+
+Enable **Schräge Schätze / Schiffe erlauben (diagonal)** in either hunt game's
+setup to allow both diagonal slopes, alongside horizontal and vertical objects.
+The choice applies to the next round, including cooperative maps and the computer's
+hidden layout. During manual placement, **Drehen** cycles through all four
+orientations. Objects still cannot touch one another, even diagonally. Computer
+search also considers diagonal neighbours when this option is enabled.

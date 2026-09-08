@@ -11,6 +11,7 @@ export function chooseComputerSquare(
   moves: TreasureMove[],
   collectedCells: number[],
   random = Math.random,
+  allowDiagonal = false,
 ): number | null {
   const seen = new Set(moves.map((move) => move.cell));
   const collected = new Set(collectedCells);
@@ -28,6 +29,7 @@ export function chooseComputerSquare(
       [1, 0],
       [0, -1],
       [0, 1],
+      ...(allowDiagonal ? [[-1, -1], [-1, 1], [1, -1], [1, 1]] : []),
     ]) {
       const r = row + dr,
         c = col + dc;

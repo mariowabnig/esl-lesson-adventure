@@ -133,8 +133,8 @@ Module0_WordSelection
   coordinate exploration with treasures of different sizes, each occupying 2–4
   horizontal or vertical cells. Treasures are separated, including diagonally.
   Setup supports 4–16-square sides and 0–6 treasures of each size. Active rounds
-  retain their starting settings. Optional computer play alternates turns on a
-  shared map and awards each treasure to the explorer uncovering its last square.
+  retain their starting settings. Computer play uses `components/HuntDuel.tsx` for separate boards and manual
+  placement before alternating turns.
 - `utils/treasureGame.ts`: pure ownership updates and computer move selection from
   revealed hits/misses only. The module cancels its delayed computer move when a
   round ends, restarts or unmounts.
@@ -177,3 +177,7 @@ Module0_WordSelection
   fleet game, reusing `createSizedTreasures`, `chooseComputerSquare` and
   `uncoverTreasure` for identical placement, fair targeting and point ownership.
   The Battleships entry point retains the previous module behind a version switch.
+- `components/HuntDuel.tsx` owns computer-mode placement, independent attack and
+  defence progress, life/win checks, final reveal and cancellable AI timer for both
+  hunt games. `utils/huntPlacement.ts` validates straight, separated placements.
+  Each game validates exact whole-number lives before taking a round snapshot.

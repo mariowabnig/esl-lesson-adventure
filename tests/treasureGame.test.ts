@@ -125,3 +125,12 @@ describe('lives', () => {
     expect(remainingLives([...moves,...moves], 'team', 1)).toBe(0);
   });
 });
+
+describe('diagonal computer search', () => {
+  it('considers diagonal neighbours only when enabled without wrapping edges', () => {
+    const moves = [{ cell: 0, hit: true, explorer: 'computer' as const }];
+    expect(chooseComputerSquare(6, moves, [], () => 0.99, true)).toBe(7);
+    expect(chooseComputerSquare(6, moves, [], () => 0.99)).toBe(1);
+    expect(chooseComputerSquare(6, [{ cell: 5, hit: true, explorer: 'computer' }], [], () => 0.99, true)).toBe(10);
+  });
+});

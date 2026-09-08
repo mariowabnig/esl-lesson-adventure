@@ -1,3 +1,4 @@
+import HuntDuel from '../../components/HuntDuel';
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   createSizedTreasures,
@@ -14,7 +15,9 @@ import {
 export default function ModuleTreasureHunt() {
   const boardRef = useRef<HTMLDivElement>(null);
   const [setupOpen, setSetupOpen] = useState(true);
+  const [allowDiagonal, setAllowDiagonal] = useState(false);
   const [lives, setLives] = useState(5);
+  const [roundId, setRoundId] = useState(0);
   const [size, setSize] = useState(6);
   const [treasureCounts, setTreasureCounts] = useState([1, 1, 1]);
   const treasureSizes = treasureCounts.flatMap((count, index) =>
@@ -22,6 +25,7 @@ export default function ModuleTreasureHunt() {
   );
   const [mode, setMode] = useState<"together" | "computer">("together");
   const [round, setRound] = useState<{
+    allowDiagonal: boolean;
     lives: number;
     size: number;
     treasures: number[][];
@@ -68,17 +72,20 @@ export default function ModuleTreasureHunt() {
         ? "Your team wins! 🎉"
         : "The computer wins. Try another round!";
   const start = () => {
+    if (!Number.isSafeInteger(lives) || lives < 0) { setMessage("Bitte eine ganze Zahl ab 0 für die Leben eingeben."); return; }
     try {
       setRound({
+        allowDiagonal,
         lives,
         size,
-        treasures: createSizedTreasures(size, treasureSizes),
+        treasures: createSizedTreasures(size, treasureSizes, Math.random, allowDiagonal),
         mode,
       });
     } catch (error) {
       setMessage((error as Error).message);
       return;
     }
+    setRoundId(id => id + 1);
     setSetupOpen(false);
     setReveal(null);
     setProgress({ moves: [], owners: {} });
@@ -121,7 +128,7 @@ export default function ModuleTreasureHunt() {
     [round, ended, complete, progress],
   );
   useEffect(() => {
-    if (!computerTurn || !round) return;
+    if (!computerTurn || !round || round.mode === "computer") return;
     const timer = window.setTimeout(() => {
       const collectedCells = Object.keys(progress.owners).flatMap(
         (index) => round.treasures[Number(index)],
@@ -159,6 +166,7 @@ export default function ModuleTreasureHunt() {
     }
     makeMove(cell, "team");
   };
+  if (round && Boolean(round.mode === "computer")) return <HuntDuel key={roundId} size={round.size} lives={round.lives} allowDiagonal={round.allowDiagonal} enemy={round.treasures} ships={false} onSetup={() => { setRound(null); setSetupOpen(true); setMessage("Einstellungen wählen und eine neue Runde starten."); }} onRestart={start} />;
   return (
     <section className="treasure-module max-w-5xl mx-auto p-2 sm:p-6 space-y-5">
       <header className="text-center">
@@ -194,10 +202,10 @@ export default function ModuleTreasureHunt() {
             <option value="computer">Euer Team gegen den Computer</option>
           </select>
         </label>
+        <label className="flex items-center gap-2"><input type="checkbox" checked={allowDiagonal} onChange={e => setAllowDiagonal(e.target.checked)} /> Schräge Schätze / Schiffe erlauben (diagonal)</label>
         <label>Leben pro Seite
-          <select aria-label="Leben pro Seite" value={lives} onChange={e => setLives(Number(e.target.value))}>
-            {[0, 3, 5, 10, 15, 20].map(n => <option key={n} value={n}>{n === 0 ? "Unbegrenzt" : n}</option>)}
-          </select>
+          <input type="number" min="0" step="1" aria-label="Leben pro Seite" value={Number.isNaN(lives) ? "" : lives} onChange={e => setLives(e.target.value === "" ? NaN : Number(e.target.value))} className="block border rounded p-2" />
+          <span className="text-sm">Genaue Anzahl eingeben · 0 = unbegrenzt</span>
         </label>
         <p>Ein Fehlschuss kostet ein Leben. Treffer kosten nichts. Im Computermodus hat jede Seite eigene Leben; wer keine mehr hat, verliert. Einstellungen gelten ab der nächsten Runde.</p>
         <fieldset className="treasure-counts col-span-full">
@@ -349,7 +357,7 @@ export default function ModuleTreasureHunt() {
           <p className="text-lg">
             Schatzgrößen:{" "}
             {round.treasures.map((t) => `${t.length} Felder`).join(" · ")}.
-            Jeder Schatz belegt mehrere Felder in einer geraden Reihe: waagrecht oder senkrecht. Schätze berühren sich nicht, auch nicht an den Ecken.
+            Jeder Schatz belegt mehrere Felder in einer geraden Reihe: waagrecht oder senkrecht{round.allowDiagonal ? " oder diagonal" : ""}. Schätze berühren sich nicht, auch nicht an den Ecken.
           </p>
           <div className="hunt-board-wrap bg-white rounded-xl shadow p-2">
             <div

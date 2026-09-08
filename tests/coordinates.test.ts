@@ -102,3 +102,27 @@ describe("treasures of different sizes", () => {
     expect(() => createSizedTreasures(2, [2, 2])).toThrow(RangeError);
   });
 });
+
+describe('optional diagonal generation', () => {
+  it('generates both slopes while preserving lengths, bounds and separation', () => {
+    const slopes = new Set<number>();
+    for (let seed = 1; seed <= 20; seed++) {
+      let state = seed;
+      const random = () => { state = (state * 1664525 + 1013904223) >>> 0; return state / 4294967296; };
+      const objects = createSizedTreasures(8, [4, 3, 2], random, true);
+      expect(objects.map(object => object.length)).toEqual([4, 3, 2]);
+      for (const [index, object] of objects.entries()) {
+        const dr = Math.floor(object[1] / 8) - Math.floor(object[0] / 8), dc = object[1] % 8 - object[0] % 8;
+        slopes.add(object[1] - object[0]);
+        object.forEach((cell, i) => {
+          expect(cell).toBeGreaterThanOrEqual(0); expect(cell).toBeLessThan(64);
+          expect(Math.floor(cell / 8)).toBe(Math.floor(object[0] / 8) + i * dr);
+          expect(cell % 8).toBe(object[0] % 8 + i * dc);
+          for (const other of objects.slice(index + 1).flat())
+            expect(Math.abs(Math.floor(cell / 8) - Math.floor(other / 8)) > 1 || Math.abs(cell % 8 - other % 8) > 1).toBe(true);
+        });
+      }
+    }
+    expect(slopes.has(9)).toBe(true); expect(slopes.has(-7)).toBe(true);
+  });
+});

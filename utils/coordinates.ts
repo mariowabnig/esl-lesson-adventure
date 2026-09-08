@@ -1,3 +1,5 @@
+import { placementCells, type PlacementDirection } from './huntPlacement';
+
 /** Accept classroom notation such as B3, b 3 and B-3; reject partial numbers. */
 export function parseGridCoordinate(
   value: string,
@@ -15,6 +17,7 @@ export function createSizedTreasures(
   size: number,
   lengths: number[],
   random = Math.random,
+  allowDiagonal = false,
 ): number[][] {
   if (
     !Number.isInteger(size) ||
@@ -36,15 +39,11 @@ export function createSizedTreasures(
     const candidates: number[][] = [];
     for (let row = 0; row < size; row++)
       for (let col = 0; col < size; col++)
-        for (const vertical of [false, true]) {
-          if ((vertical ? row : col) + length > size) continue;
-          candidates.push(
-            Array.from(
-              { length },
-              (_, i) =>
-                (row + (vertical ? i : 0)) * size + col + (vertical ? 0 : i),
-            ),
-          );
+        for (const direction of (allowDiagonal
+          ? ['horizontal', 'vertical', 'diagonal-down', 'diagonal-up']
+          : ['horizontal', 'vertical']) as PlacementDirection[]) {
+          const cells = placementCells(size, length, row * size + col, direction, []);
+          if (cells) candidates.push(cells);
         }
     for (let i = candidates.length - 1; i > 0; i--) {
       const j = Math.floor(random() * (i + 1));
